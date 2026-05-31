@@ -3,7 +3,10 @@ async function getTeams() {
     headers: { 'Authorization': '1a1dced8-6268-41f3-b373-7bde5d196b8d' }
   });
   const data = await res.json();
-  return data.data;
+  
+  // 【关键修改】：只保留 id 小于或等于 30 的球队（现役 30 支）
+  const activeTeams = data.data.filter((t: any) => t.id <= 30);
+  return activeTeams;
 }
 
 export default async function TeamsPage() {
