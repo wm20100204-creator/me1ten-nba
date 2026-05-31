@@ -3,14 +3,16 @@ import Link from 'next/link'; // 导入跳转组件
 
 // 获取 NBA 数据的方法
 async function getNBAGames() {
+  // 获取今天的日期 (格式: YYYY-MM-DD)
   const today = new Date().toISOString().split('T')[0];
   
   try {
     const res = await fetch(`https://api.balldontlie.io/v1/games?dates[]=${today}`, {
       headers: {
+        // 你的 API Key
         'Authorization': '1a1dced8-6268-41f3-b373-7bde5d196b8d',
       },
-      next: { revalidate: 60 } 
+      next: { revalidate: 60 } // 每 60 秒自动刷新缓存
     });
 
     if (!res.ok) {
@@ -30,7 +32,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-[#0b0e11] text-white p-4 md:p-10 font-sans">
-      {/* 顶部导航栏 - 已更新跳转功能 */}
+      {/* 顶部导航栏 */}
       <nav className="max-w-6xl mx-auto flex justify-between items-center mb-12 border-b border-zinc-800 pb-6">
         <div>
           <Link href="/">
@@ -42,6 +44,7 @@ export default async function Home() {
         </div>
         <div className="flex gap-6 text-sm font-medium">
           <Link href="/" className="text-blue-500 border-b border-blue-500 pb-1">今日比分</Link>
+          <Link href="/standings" className="text-zinc-400 hover:text-white transition-colors">联盟排名</Link>
           <Link href="/players" className="text-zinc-400 hover:text-white transition-colors">球员列表</Link>
           <Link href="/teams" className="text-zinc-400 hover:text-white transition-colors">球队库</Link>
         </div>
@@ -50,17 +53,17 @@ export default async function Home() {
       {/* 主内容区域 */}
       <main className="max-w-6xl mx-auto">
         
-        {/* 新增：快速导航大卡片 */}
+        {/* 快速导航大卡片 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
           <Link href="/players" className="group bg-[#16191d] border border-zinc-800 p-6 rounded-2xl hover:border-blue-500 transition-all cursor-pointer">
             <span className="text-blue-500 text-[10px] font-bold tracking-widest uppercase">Database</span>
             <h3 className="text-lg font-bold mt-1 group-hover:text-blue-400 transition-colors">进入球员库 →</h3>
             <p className="text-zinc-500 text-xs mt-1">查询现役所有球员资料与位置</p>
           </Link>
-          <Link href="/teams" className="group bg-[#16191d] border border-zinc-800 p-6 rounded-2xl hover:border-zinc-500 transition-all cursor-pointer">
-            <span className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase">Teams</span>
-            <h3 className="text-lg font-bold mt-1 group-hover:text-white transition-colors">查看球队库 →</h3>
-            <p className="text-zinc-500 text-xs mt-1">NBA 东西部 30 支球队详细信息</p>
+          <Link href="/standings" className="group bg-[#16191d] border border-zinc-800 p-6 rounded-2xl hover:border-zinc-500 transition-all cursor-pointer">
+            <span className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase">Rankings</span>
+            <h3 className="text-lg font-bold mt-1 group-hover:text-white transition-colors">查看联盟排名 →</h3>
+            <p className="text-zinc-500 text-xs mt-1">NBA 东西部各球队分组详情</p>
           </Link>
         </div>
 
@@ -89,12 +92,19 @@ export default async function Home() {
                   {/* 主队 */}
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-zinc-800 rounded-full flex items-center justify-center font-bold text-xs">
-                        {game.home_team.abbreviation}
+                      {/* 真实的球队 Logo */}
+                      <img 
+                        src={`https://www.nba.com/assets/logos/teams/primary/full/${game.home_team.abbreviation}.svg`} 
+                        alt="logo"
+                        className="w-10 h-10 object-contain p-1 bg-zinc-800 rounded-lg shadow-inner"
+                        onError={(e) => { e.currentTarget.style.display = 'none' }} 
+                      />
+                      <div>
+                        <span className="text-lg font-bold block leading-tight">{game.home_team.full_name}</span>
+                        <span className="text-[10px] text-zinc-500 uppercase">{game.home_team.abbreviation}</span>
                       </div>
-                      <span className="text-lg font-semibold">{game.home_team.full_name}</span>
                     </div>
-                    <span className="text-3xl font-mono font-bold">{game.home_team_score}</span>
+                    <span className="text-3xl font-mono font-black">{game.home_team_score}</span>
                   </div>
 
                   {/* 分割线 */}
@@ -105,12 +115,19 @@ export default async function Home() {
                   {/* 客队 */}
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-zinc-800 rounded-full flex items-center justify-center font-bold text-xs">
-                        {game.visitor_team.abbreviation}
+                      {/* 真实的球队 Logo */}
+                      <img 
+                        src={`https://www.nba.com/assets/logos/teams/primary/full/${game.visitor_team.abbreviation}.svg`} 
+                        alt="logo"
+                        className="w-10 h-10 object-contain p-1 bg-zinc-800 rounded-lg shadow-inner"
+                        onError={(e) => { e.currentTarget.style.display = 'none' }}
+                      />
+                      <div>
+                        <span className="text-lg font-bold block leading-tight">{game.visitor_team.full_name}</span>
+                        <span className="text-[10px] text-zinc-500 uppercase">{game.visitor_team.abbreviation}</span>
                       </div>
-                      <span className="text-lg font-semibold">{game.visitor_team.full_name}</span>
                     </div>
-                    <span className="text-3xl font-mono font-bold text-zinc-400">{game.visitor_team_score}</span>
+                    <span className="text-3xl font-mono font-black text-zinc-400">{game.visitor_team_score}</span>
                   </div>
                 </div>
 
