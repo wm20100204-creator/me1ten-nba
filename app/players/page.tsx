@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function PlayersPage() {
-  // 关键修复：给 useState 加上 <any[]> 类型定义
   const [players, setPlayers] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,7 +21,6 @@ export default function PlayersPage() {
       if (pageNum === 1) {
         setPlayers(data.data || []);
       } else {
-        // 这里就是报错的地方，现在修复了
         setPlayers((prev: any[]) => [...prev, ...(data.data || [])]);
       }
     } catch (error) {
@@ -55,13 +53,13 @@ export default function PlayersPage() {
       </nav>
 
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold mb-8 tracking-tighter">NBA 球员库查询</h2>
+        <h2 className="text-3xl font-bold mb-8 tracking-tighter text-white">NBA 球员库查询</h2>
 
         <form onSubmit={handleSearch} className="flex gap-2 mb-10">
           <input 
             type="text"
             placeholder="搜索球员姓氏 (如: James, Curry, Yao)"
-            className="flex-1 bg-[#16191d] border border-zinc-800 p-4 rounded-2xl focus:outline-none focus:border-blue-500 transition-all text-sm"
+            className="flex-1 bg-[#16191d] border border-zinc-800 p-4 rounded-2xl focus:outline-none focus:border-blue-500 transition-all text-sm text-white"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -79,7 +77,7 @@ export default function PlayersPage() {
               
               <div className="mt-4 pt-4 border-t border-zinc-900 flex justify-between items-center">
                 <span className="text-[10px] text-zinc-600 font-mono">ID: {p.id}</span>
-                <span className="text-[10px] text-zinc-400">Regular Season</span>
+                <span className="text-[10px] text-zinc-400 uppercase">Regular Season</span>
               </div>
             </div>
           ))}
@@ -98,4 +96,11 @@ export default function PlayersPage() {
         )}
 
         {players.length === 0 && !loading && (
-          <p className="text-center text-zinc-500 py-20 border border-dashed border-zinc-800 ro
+          <div className="text-center text-zinc-500 py-20 border border-dashed border-zinc-800 rounded-3xl">
+            没有找到相关球员。请尝试输入完整的姓氏。
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
