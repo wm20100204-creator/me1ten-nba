@@ -13,7 +13,7 @@ export default function PlayersPage() {
   const [playerStats, setPlayerStats] = useState<any>(null);
   const [loadingStats, setLoadingStats] = useState(false);
 
-  // 1. 获取球员列表
+  // 获取球员列表
   const fetchPlayers = async (searchName = '', pageNum = 1) => {
     setLoading(true);
     try {
@@ -30,16 +30,14 @@ export default function PlayersPage() {
     setLoading(false);
   };
 
-  // 2. 获取球员统计 (强制请求 2023 赛季，因为数据最全)
+  // 获取球员统计 (请求 2023 赛季确保数据最全)
   const fetchPlayerStats = async (playerId: number) => {
     setLoadingStats(true);
     try {
-      // 我们先请求 2023 赛季，如果没数据再尝试 2024
       const res = await fetch(`https://api.balldontlie.io/v1/season_averages?season=2023&player_ids[]=${playerId}`, {
         headers: { 'Authorization': '1a1dced8-6268-41f3-b373-7bde5d196b8d' }
       });
       const data = await res.json();
-      console.log("API返回的统计数据:", data); // 调试用
       setPlayerStats(data.data[0] || null);
     } catch (error) {
       console.error("获取统计失败", error);
@@ -50,7 +48,6 @@ export default function PlayersPage() {
   useEffect(() => { fetchPlayers(); }, []);
 
   const handlePlayerClick = (player: any) => {
-    console.log("选中的球员基础信息:", player); // 调试用
     setSelectedPlayer(player);
     setPlayerStats(null);
     fetchPlayerStats(player.id);
@@ -70,7 +67,7 @@ export default function PlayersPage() {
           <input 
             type="text"
             placeholder="搜索球员姓氏 (如: James, Curry, Allen)"
-            className="flex-1 bg-[#16191d] border border-zinc-800 p-5 rounded-3xl focus:border-blue-500 outline-none text-base"
+            className="flex-1 bg-[#16191d] border border-zinc-800 p-5 rounded-3xl focus:border-blue-500 outline-none text-base text-white"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -116,17 +113,16 @@ export default function PlayersPage() {
                   <p className="text-zinc-500 text-[10px] font-bold uppercase mb-1">Position</p>
                   <p className="text-lg font-black text-blue-500">{selectedPlayer.position || 'N/A'}</p>
                 </div>
-                {/* 物理属性修正：增加备用显示 */}
                 <div className="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800 text-center">
                   <p className="text-zinc-500 text-[10px] font-bold uppercase mb-1">Height</p>
                   <p className="text-lg font-black text-white">
-                    {selectedPlayer.height_feet ? `${selectedPlayer.height_feet}'${selectedPlayer.height_inches}"` : (selectedPlayer.height ? selectedPlayer.height : 'N/A')}
+                    {selectedPlayer.height_feet ? `${selectedPlayer.height_feet}'${selectedPlayer.height_inches}"` : 'N/A'}
                   </p>
                 </div>
                 <div className="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800 text-center">
                   <p className="text-zinc-500 text-[10px] font-bold uppercase mb-1">Weight</p>
                   <p className="text-lg font-black text-white">
-                    {selectedPlayer.weight_pounds ? `${selectedPlayer.weight_pounds} lbs` : (selectedPlayer.weight ? selectedPlayer.weight : 'N/A')}
+                    {selectedPlayer.weight_pounds ? `${selectedPlayer.weight_pounds} lbs` : 'N/A'}
                   </p>
                 </div>
               </div>
@@ -134,7 +130,7 @@ export default function PlayersPage() {
               <div className="bg-zinc-900/30 border border-zinc-800 rounded-[2rem] p-8">
                 <div className="flex justify-between items-center mb-8">
                   <h4 className="text-xs font-black text-zinc-400 uppercase tracking-[0.3em]">2023-24 Season Averages</h4>
-                  <span className="text-[10px] bg-blue-500/10 text-blue-500 px-3 py-1 rounded-full font-bold italic">OFFICIAL DATA</span>
+                  <span className="text-[10px] bg-blue-500/10 text-blue-500 px-3 py-1 rounded-full font-bold italic uppercase tracking-widest">Live Stats</span>
                 </div>
 
                 {loadingStats ? (
@@ -155,7 +151,7 @@ export default function PlayersPage() {
                         <p className="text-[10px] text-blue-500 font-bold uppercase mt-2">Assists</p>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-zinc-800/50">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-zinc-800/50 text-center">
                       <div><p className="text-zinc-500 text-[10px] font-bold uppercase mb-1">FG%</p><p className="text-xl font-bold">{formatPct(playerStats.fg_pct)}</p></div>
                       <div><p className="text-zinc-500 text-[10px] font-bold uppercase mb-1">3P%</p><p className="text-xl font-bold">{formatPct(playerStats.fg3_pct)}</p></div>
                       <div><p className="text-zinc-500 text-[10px] font-bold uppercase mb-1">GP</p><p className="text-xl font-bold">{playerStats.games_played}</p></div>
@@ -164,7 +160,7 @@ export default function PlayersPage() {
                   </div>
                 ) : (
                   <div className="text-center py-12 text-zinc-600 italic border border-dashed border-zinc-800 rounded-3xl">
-                    No stats available in v1 database. Try another star player.
+                    No stats available for this season.
                   </div>
                 )}
               </div>
