@@ -1,56 +1,63 @@
 import React from 'react';
 import Link from 'next/link';
 
-async function getNBAGames() {
-  const options = {
-    method: 'GET',
-    headers: {
-      'x-rapidapi-key': 'c2503628dcmsh417bcf8ffac6e71p138e41jsne69c13e1926f',
-      'x-rapidapi-host': 'nba-api-free-data.p.rapidapi.com'
-    }
-  };
-
-  try {
-    // 这个 API 的获取比分路径通常是 /games
-    const res = await fetch('https://nba-api-free-data.p.rapidapi.com/nba-player-stats', options); 
-    const data = await res.json();
-    return data || []; 
-  } catch (error) {
-    return [];
-  }
-}
-
-export default async function Home() {
-  const games = await getNBAGames();
-
+export default function Home() {
   return (
-    <div className="min-h-screen bg-[#0b0e11] text-white p-4 md:p-10 font-sans">
-      <nav className="max-w-6xl mx-auto flex justify-between items-center mb-12 border-b border-zinc-800 pb-6">
-        <Link href="/"><h1 className="text-2xl font-black italic tracking-tighter">ME1TEN<span className="text-blue-500">.COM</span></h1></Link>
-        <div className="flex gap-8 text-sm font-medium">
-          <Link href="/" className="text-blue-500 border-b border-blue-500 pb-1">今日比分</Link>
-          <Link href="/players" className="text-zinc-400 hover:text-white transition-colors">球员查询</Link>
-          <Link href="/standings" className="text-zinc-400 hover:text-white transition-colors">联盟排名</Link>
+    <div className="min-h-screen bg-[#0b0e11] text-white p-6 md:p-12 font-sans relative overflow-hidden">
+      {/* 装饰背景 */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px]"></div>
+      
+      <nav className="max-w-6xl mx-auto flex justify-between items-center mb-20 border-b border-zinc-800 pb-8 relative z-10">
+        <div>
+          <h1 className="text-3xl font-black italic tracking-tighter">
+            ME1TEN<span className="text-blue-500">.STATS</span>
+          </h1>
+          <p className="text-[10px] text-zinc-500 tracking-[0.4em] uppercase mt-1 text-center md:text-left">NBA Intelligence Terminal</p>
+        </div>
+        <div className="hidden md:flex gap-10 text-xs font-bold uppercase tracking-widest text-zinc-400">
+          <Link href="/" className="text-blue-500">Dashboard</Link>
+          <Link href="/players" className="hover:text-white transition-colors">Players</Link>
+          <Link href="/standings" className="hover:text-white transition-colors">Standings</Link>
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
-          <Link href="/players" className="bg-[#16191d] border border-zinc-800 p-6 rounded-2xl hover:border-blue-500 transition-all">
-            <h3 className="text-lg font-bold">进入球员库 →</h3>
-            <p className="text-zinc-500 text-xs mt-1">查询杜兰特、库里等详细身高体重</p>
-          </Link>
-          <Link href="/standings" className="bg-[#16191d] border border-zinc-800 p-6 rounded-2xl hover:border-zinc-500 transition-all">
-            <h3 className="text-lg font-bold">联盟排名系统 →</h3>
-            <p className="text-zinc-500 text-xs mt-1">东西部战绩实时监控</p>
-          </Link>
+      <main className="max-w-6xl mx-auto relative z-10">
+        <div className="mb-16">
+          <h2 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter mb-4 leading-none">
+            Elite NBA <br />Data Engine
+          </h2>
+          <p className="text-zinc-500 max-w-xl text-sm leading-relaxed">
+            接入全球领先的 RapidAPI 实时数据源。提供最精准的球员物理资料、场均表现及东西部联盟即时排名。
+          </p>
         </div>
 
-        <h2 className="text-xl font-bold mb-8">最新动态记录</h2>
-        <div className="text-zinc-500 text-sm italic">
-          数据已连接至 RapidAPI: nba-api-free-data
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 球员库入口 */}
+          <Link href="/players" className="group bg-[#16191d] border border-zinc-800 p-10 rounded-[2.5rem] hover:border-blue-500 transition-all shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-8 text-6xl opacity-5 font-black italic uppercase text-white">DB</div>
+            <span className="text-blue-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4 block">Research Center</span>
+            <h3 className="text-3xl font-black italic uppercase group-hover:text-blue-400 transition-colors">查询球员库 →</h3>
+            <p className="text-zinc-500 text-sm mt-4 leading-relaxed max-w-[250px]">
+              实时检索全联盟球员的身高、体重及职业生涯数据。
+            </p>
+          </Link>
+
+          {/* 排名入口 */}
+          <Link href="/standings" className="group bg-[#16191d] border border-zinc-800 p-10 rounded-[2.5rem] hover:border-zinc-500 transition-all shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-8 text-6xl opacity-5 font-black italic uppercase text-white">RANK</div>
+            <span className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4 block">Alliance Status</span>
+            <h3 className="text-3xl font-black italic uppercase group-hover:text-zinc-300 transition-colors">东西部排名 →</h3>
+            <p className="text-zinc-500 text-sm mt-4 leading-relaxed max-w-[250px]">
+              实时监控 NBA 联盟各球队胜率、排名及近期战绩。
+            </p>
+          </Link>
         </div>
       </main>
+
+      <footer className="max-w-6xl mx-auto mt-32 pt-8 border-t border-zinc-900 text-[10px] text-zinc-700 uppercase tracking-widest flex justify-between items-center">
+        <span>© 2026 ME1TEN.COM DATA TERMINAL</span>
+        <span>Powered by RapidAPI</span>
+      </footer>
     </div>
   );
 }
