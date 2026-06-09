@@ -1,117 +1,63 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 
-export default function LeaderboardPage() {
-  const [leaders, setLeaders] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+async function getTeams() {
+  try {
+    const res = await fetch('https://api.balldontlie.io/v1/teams', {
+      headers: { 'Authorization': '35a8d143-7cb0-4165-850d-f504a5a84700' }
+    });
+    const data = await res.json();
+    return data.data || [];
+  } catch (e) { return []; }
+}
 
-  const HEADERS = {
-    'x-rapidapi-key': 'c2503628dcmsh417bcf8ffac6e71p138e41jsne69c13e1926f',
-    'x-rapidapi-host': 'tank01-fantasy-stats.p.rapidapi.com'
-  };
+export default async function StandingsPage() {
+  const teams = await getTeams();
+  const east = teams.filter((t: any) => t.conference === 'East');
+  const west = teams.filter((t: any) => t.conference === 'West');
 
-  useEffect(() => {
-    const fetchLeaders = async () => {
-      setLoading(true);
-      try {
-        // 先尝试获取 2024 赛季，这是目前数据最完整的年份
-        const url = 'https://tank01-fantasy-stats.p.rapidapi.com/getNBALeaderBoard?season=2024&resultsToReturn=10';
-        const res = await fetch(url, { headers: HEADERS });
-        const data = await res.json();
-        
-        console.log("领袖榜原始数据:", data); // 你可以按 F12 在控制台查看
-
-        if (data && data.body) {
-          setLeaders(data.body);
-        } else {
-          setError('API 暂时没有返回数据，可能是额度用尽或赛季结算中');
-        }
-      } catch (e) {
-        setError('网络连接失败，请检查网络');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchLeaders();
-  }, []);
-
-  const LeaderSection = ({ title, data, statKey, unit }: any) => {
-    // 防御性编程：如果该项没数据，不渲染
-    if (!data || !Array.isArray(data)) return null;
-
-    return (
-      <div className="bg-[#16191d] border border-zinc-800 rounded-[2.5rem] p-8 shadow-2xl transition-all hover:border-blue-500/50">
-        <h3 className="text-xl font-black italic uppercase tracking-tighter text-blue-500 mb-8 flex items-center gap-3">
-          <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-          {title}
-        </h3>
-        <div className="space-y-4">
-          {data.map((player: any, index: number) => (
-            <div key={index} className={`flex items-center justify-between p-4 rounded-2xl transition-all ${index === 0 ? 'bg-blue-600/10 border border-blue-500/30' : 'hover:bg-zinc-900'}`}>
-              <div className="flex items-center gap-4">
-                <span className={`font-mono text-xs ${index === 0 ? 'text-blue-500 font-bold' : 'text-zinc-600'}`}>
-                  {index + 1}
-                </span>
-                <div>
-                  <p className={`font-black italic uppercase leading-none ${index === 0 ? 'text-white text-lg' : 'text-zinc-300 text-sm'}`}>
-                    {player.longName || player.name || 'Unknown'}
-                  </p>
-                  <p className="text-[10px] text-zinc-500 font-bold uppercase mt-1">{player.team || 'NBA'}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className={`font-black italic ${index === 0 ? 'text-blue-500 text-2xl' : 'text-white text-lg'}`}>
-                  {player[statKey] || '0.0'}
-                </p>
-                <p className="text-[8px] text-zinc-600 font-black uppercase tracking-widest">{unit}</p>
-              </div>
-            </div>
-          ))}
+  const TeamCard = ({ t }: any) => (
+    <div className="flex items-center justify-between p-6 bg-[#16191d] border border-zinc-800 rounded-3xl hover:border-blue-500 transition-all shadow-xl group">
+      <div className="flex items-center gap-6">
+        <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center font-black italic text-xl border border-zinc-800 group-hover:text-blue-500 transition-colors">
+          {t.abbreviation}
+        </div>
+        <div>
+          <h3 className="text-xl font-black italic uppercase tracking-tighter leading-none">{t.full_name}</h3>
+          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">{t.city} | {t.division}</p>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[#0b0e11] text-white p-6 md:p-12 font-sans">
-      <nav className="max-w-7xl mx-auto flex justify-between items-center mb-16 border-b border-zinc-800 pb-8">
-        <Link href="/"><h1 className="text-3xl font-black italic tracking-tighter">ME1TEN<span className="text-blue-500">.STATS</span></h1></Link>
-        <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-zinc-500">
-           <Link href="/" className="hover:text-white transition-colors">Home</Link>
-           <Link href="/standings" className="text-blue-500 underline underline-offset-8">Leaders</Link>
-           <Link href="/players" className="hover:text-white transition-colors">Players</Link>
-           <Link href="/teams" className="hover:text-white transition-colors">Teams</Link>
+      <nav className="max-w-6xl mx-auto flex justify-between items-center mb-16 border-b border-zinc-800 pb-8 text-[10px] font-black uppercase tracking-widest">
+        <Link href="/"><h1 className="text-2xl font-black italic tracking-tighter">ME1TEN<span className="text-blue-500">.STATS</span></h1></Link>
+        <div className="flex gap-8">
+           <Link href="/" className="text-zinc-500 hover:text-white transition-colors">Home</Link>
+           <Link href="/standings" className="text-blue-500">Standings</Link>
+           <Link href="/players" className="text-zinc-500 hover:text-white transition-colors">Players</Link>
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-20">
-          <h2 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter leading-none mb-4">
-            League <span className="text-blue-500">Leaders</span>
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <section>
+          <h2 className="text-2xl font-black italic text-blue-500 mb-8 uppercase tracking-[0.3em] flex items-center gap-3">
+             <span className="w-10 h-[2px] bg-blue-500"></span> Eastern Conference
           </h2>
-          <p className="text-zinc-500 tracking-[0.5em] uppercase text-[10px] font-bold">2024-25 Season Performance Data</p>
-        </div>
-
-        {loading ? (
-          <div className="flex flex-col items-center py-20">
-            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">Accessing Satellite Data...</p>
+          <div className="grid gap-4">
+            {east.map((t: any) => <TeamCard key={t.id} t={t} />)}
           </div>
-        ) : error ? (
-          <div className="text-center py-20 border border-dashed border-zinc-800 rounded-[3rem]">
-            <p className="text-zinc-500 uppercase font-black italic tracking-widest">{error}</p>
+        </section>
+        <section>
+          <h2 className="text-2xl font-black italic text-red-600 mb-8 uppercase tracking-[0.3em] flex items-center gap-3">
+             <span className="w-10 h-[2px] bg-red-600"></span> Western Conference
+          </h2>
+          <div className="grid gap-4">
+            {west.map((t: any) => <TeamCard key={t.id} t={t} />)}
           </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <LeaderSection title="Points (PPG)" data={leaders?.pts} statKey="pts" unit="Points" />
-            <LeaderSection title="Rebounds (RPG)" data={leaders?.reb} statKey="reb" unit="Rebounds" />
-            <LeaderSection title="Assists (APG)" data={leaders?.ast} statKey="ast" unit="Assists" />
-            <LeaderSection title="Blocks (BPG)" data={leaders?.blk} statKey="blk" unit="Blocks" />
-          </div>
-        )}
+        </section>
       </div>
     </div>
   );
