@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 
-// 1. 根据图片录入的季后赛对阵数据
+// 1. 修正后的季后赛对阵数据（确保全部是字符串，防止 toLowerCase 报错）
 const BRACKET_2026 = {
   west: {
     r1: [
@@ -21,7 +21,7 @@ const BRACKET_2026 = {
   east: {
     r1: [
       { top: "DET", bot: "ORL", score: "4-3", seedT: 1, seedB: 8 },
-      { top: { name: "CLE", img: "cle" }, bot: { name: "TOR", img: "tor" }, score: "4-3", seedT: 4, seedB: 5 },
+      { top: "CLE", bot: "TOR", score: "4-3", seedT: 4, seedB: 5 },
       { top: "BOS", bot: "PHI", score: "3-4", seedT: 2, seedB: 7 },
       { top: "NYK", bot: "ATL", score: "4-2", seedT: 3, seedB: 6 },
     ],
@@ -34,7 +34,7 @@ const BRACKET_2026 = {
   finals: { top: "SAS", bot: "NYK", score: "1-2", status: "FINALS IN PROGRESS" }
 };
 
-// 2. 根据图片录入的常规赛排名数据（已修正缩写以适配 ESPN Logo）
+// 2. 常规赛排名数据（同步图片数据）
 const STANDINGS_DATA = {
   west: [
     { rank: 1, name: "雷霆", abbr: "okc", wl: "64/18", pct: "78%" },
@@ -47,11 +47,11 @@ const STANDINGS_DATA = {
     { rank: 8, name: "开拓者", abbr: "por", wl: "42/40", pct: "51.2%" },
     { rank: 9, name: "快船", abbr: "lac", wl: "42/40", pct: "51.2%" },
     { rank: 10, name: "勇士", abbr: "gsw", wl: "37/45", pct: "45.1%" },
-    { rank: 11, name: "鹈鹕", abbr: "no", wl: "26/56", pct: "31.7%" }, // 修正：鹈鹕在 ESPN 是 no
+    { rank: 11, name: "鹈鹕", abbr: "no", wl: "26/56", pct: "31.7%" },
     { rank: 12, name: "独行侠", abbr: "dal", wl: "26/56", pct: "31.7%" },
     { rank: 13, name: "灰熊", abbr: "mem", wl: "25/57", pct: "30.5%" },
     { rank: 14, name: "国王", abbr: "sac", wl: "22/60", pct: "26.8%" },
-    { rank: 15, name: "爵士", abbr: "utah", wl: "22/60", pct: "26.8%" }, // 修正：爵士在 ESPN 是 utah
+    { rank: 15, name: "爵士", abbr: "utah", wl: "22/60", pct: "26.8%" },
   ],
   east: [
     { rank: 1, name: "活塞", abbr: "det", wl: "60/22", pct: "73.2%" },
@@ -72,29 +72,26 @@ const STANDINGS_DATA = {
   ]
 };
 
-// 辅助工具：处理特殊的 ESPN 缩写
-const getEspnAbbr = (abbr: string) => {
-  const map: Record<string, string> = {
-    "nop": "no",
-    "uta": "utah",
-    "brk": "bkn",
-    "cho": "cha"
-  };
-  return map[abbr.toLowerCase()] || abbr.toLowerCase();
+// 辅助：处理特殊球队的 ESPN 图片缩写
+const fixAbbr = (a: string) => {
+  const s = a.toLowerCase();
+  if (s === "nop") return "no";
+  if (s === "uta") return "utah";
+  return s;
 };
 
 const SeriesCard = ({ t1, t2, score, seed1, seed2 }: any) => (
   <div className="bg-[#16191d] border border-zinc-800 p-3 rounded-xl w-44 hover:border-blue-500 transition-all shadow-lg group">
     <div className="flex justify-between items-center mb-2">
       <div className="flex items-center gap-2">
-        <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${getEspnAbbr(t1)}.png`} className="w-5 h-5" />
+        <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${fixAbbr(t1)}.png`} className="w-5 h-5" />
         <span className={`font-black italic text-[10px] ${parseInt(score.split('-')[0]) >= 4 ? 'text-blue-500' : 'text-white'}`}>{t1} {seed1 && <span className="text-zinc-600 not-italic">({seed1})</span>}</span>
       </div>
       <span className="font-mono text-xs font-black">{score.split('-')[0]}</span>
     </div>
     <div className="flex justify-between items-center">
       <div className="flex items-center gap-2">
-        <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${getEspnAbbr(t2)}.png`} className="w-5 h-5" />
+        <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${fixAbbr(t2)}.png`} className="w-5 h-5" />
         <span className={`font-black italic text-[10px] ${parseInt(score.split('-')[1]) >= 4 ? 'text-blue-500' : 'text-white'}`}>{t2} {seed2 && <span className="text-zinc-600 not-italic">({seed2})</span>}</span>
       </div>
       <span className="font-mono text-xs font-black">{score.split('-')[1]}</span>
@@ -106,8 +103,8 @@ export default function PlayoffsPage() {
   return (
     <div className="min-h-screen bg-[#0b0e11] text-white font-sans p-6 md:p-12">
       <nav className="max-w-7xl mx-auto flex justify-between items-center mb-16 border-b border-zinc-800 pb-8">
-        <Link href="/"><h1 className="text-2xl font-black italic tracking-tighter">ME1TEN<span className="text-blue-500">.BRACKET</span></h1></Link>
-        <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-zinc-500">
+        <Link href="/"><h1 className="text-2xl font-black italic tracking-tighter uppercase">ME1TEN<span className="text-blue-500">.BRACKET</span></h1></Link>
+        <div className="flex gap-8 text-[10px] font-black uppercase text-zinc-500">
           <Link href="/" className="hover:text-white transition-colors">Home</Link>
           <Link href="/standings" className="hover:text-white transition-colors">Standings</Link>
           <Link href="/playoffs" className="text-blue-500 underline underline-offset-8">Playoffs</Link>
@@ -117,11 +114,11 @@ export default function PlayoffsPage() {
       <main className="max-w-7xl mx-auto overflow-x-auto pb-32">
         <div className="text-center mb-24">
           <h2 className="text-7xl font-black italic uppercase tracking-tighter">NBA Playoffs <span className="text-blue-500">2026</span></h2>
-          <p className="text-zinc-500 font-bold uppercase tracking-[0.6em] text-[10px] mt-2">Spurs vs Knicks: The Final Battle</p>
+          <p className="text-zinc-500 font-bold uppercase tracking-[0.6em] text-[10px] mt-2 italic">Official Postseason Terminal</p>
         </div>
 
         <div className="flex justify-between items-center gap-4 min-w-[1200px]">
-          {/* 西部 West */}
+          {/* 西部 */}
           <div className="flex items-center gap-10">
             <div className="space-y-6">
               <p className="text-[9px] font-black text-red-600 mb-2 uppercase text-center italic tracking-widest">West R1</p>
@@ -137,9 +134,9 @@ export default function PlayoffsPage() {
             </div>
           </div>
 
-          {/* 总决赛 Finals */}
+          {/* 总决赛 */}
           <div className="flex flex-col items-center px-6">
-            <div className="relative border-4 border-blue-500/20 p-1 rounded-[4rem] bg-zinc-900 shadow-[0_0_50px_rgba(59,130,246,0.1)]">
+            <div className="relative border-4 border-blue-500/20 p-1 rounded-[4rem] bg-zinc-900 shadow-2xl">
               <div className="bg-[#0b0e11] p-12 rounded-[3.8rem] text-center w-80 border border-white/5">
                 <p className="text-[11px] font-black text-blue-500 uppercase tracking-[0.4em] mb-10 italic">The Finals</p>
                 <div className="flex flex-col gap-10">
@@ -153,12 +150,12 @@ export default function PlayoffsPage() {
                     <span className="text-6xl font-black italic text-zinc-500">2</span>
                   </div>
                 </div>
-                <p className="mt-12 text-[10px] font-black text-zinc-500 uppercase tracking-widest">FINALS IN PROGRESS</p>
+                <p className="mt-12 text-[10px] font-black text-zinc-500 uppercase tracking-widest italic">{BRACKET_2026.finals.status}</p>
               </div>
             </div>
           </div>
 
-          {/* 东部 East */}
+          {/* 东部 */}
           <div className="flex items-center gap-10 text-right">
             <div className="space-y-0">
               <p className="text-[9px] font-black text-blue-500 mb-2 uppercase text-center italic tracking-widest">ECF</p>
@@ -176,11 +173,11 @@ export default function PlayoffsPage() {
         </div>
       </main>
 
-      {/* 常规赛排名部分 */}
+      {/* 常规赛排行榜 */}
       <section className="max-w-7xl mx-auto border-t border-zinc-800 pt-20 pb-40">
         <div className="text-center mb-16">
-          <h3 className="text-4xl font-black italic uppercase tracking-tighter text-zinc-200">Regular Season <span className="text-blue-500">Standings</span></h3>
-          <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.4em] mt-2">2025-2026 Official Record Terminal</p>
+          <h3 className="text-4xl font-black italic uppercase tracking-tighter">Regular Season <span className="text-blue-500">Standings</span></h3>
+          <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.4em] mt-2 italic">2025-26 Official Record</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -188,7 +185,7 @@ export default function PlayoffsPage() {
           <div>
             <h4 className="text-red-600 font-black italic text-xl mb-6 uppercase tracking-widest border-l-4 border-red-600 pl-4">Western Conference</h4>
             <div className="bg-[#16191d] rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left">
                 <thead>
                   <tr className="bg-zinc-900/50 text-zinc-500 text-[9px] font-black uppercase tracking-widest border-b border-zinc-800">
                     <th className="p-4 px-6">Rank</th>
@@ -218,7 +215,7 @@ export default function PlayoffsPage() {
           <div>
             <h4 className="text-blue-500 font-black italic text-xl mb-6 uppercase tracking-widest border-l-4 border-blue-500 pl-4">Eastern Conference</h4>
             <div className="bg-[#16191d] rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left">
                 <thead>
                   <tr className="bg-zinc-900/50 text-zinc-500 text-[9px] font-black uppercase tracking-widest border-b border-zinc-800">
                     <th className="p-4 px-6">Rank</th>
