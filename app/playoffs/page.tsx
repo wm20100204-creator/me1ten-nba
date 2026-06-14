@@ -21,7 +21,7 @@ const BRACKET_2026 = {
   east: {
     r1: [
       { top: "DET", bot: "ORL", score: "4-3", seedT: 1, seedB: 8 },
-      { top: "CLE", bot: "TOR", score: "4-3", seedT: 4, seedB: 5 },
+      { top: { name: "CLE", img: "cle" }, bot: { name: "TOR", img: "tor" }, score: "4-3", seedT: 4, seedB: 5 },
       { top: "BOS", bot: "PHI", score: "3-4", seedT: 2, seedB: 7 },
       { top: "NYK", bot: "ATL", score: "4-2", seedT: 3, seedB: 6 },
     ],
@@ -34,56 +34,67 @@ const BRACKET_2026 = {
   finals: { top: "SAS", bot: "NYK", score: "1-2", status: "FINALS IN PROGRESS" }
 };
 
-// 2. 根据图片录入的常规赛排名数据
+// 2. 根据图片录入的常规赛排名数据（已修正缩写以适配 ESPN Logo）
 const STANDINGS_DATA = {
   west: [
-    { rank: 1, name: "雷霆", abbr: "OKC", wl: "64/18", pct: "78%" },
-    { rank: 2, name: "马刺", abbr: "SAS", wl: "62/20", pct: "75.6%" },
-    { rank: 3, name: "掘金", abbr: "DEN", wl: "54/28", pct: "65.9%" },
-    { rank: 4, name: "湖人", abbr: "LAL", wl: "53/29", pct: "64.6%" },
-    { rank: 5, name: "火箭", abbr: "HOU", wl: "52/30", pct: "63.4%" },
-    { rank: 6, name: "森林狼", abbr: "MIN", wl: "49/33", pct: "59.8%" },
-    { rank: 7, name: "太阳", abbr: "PHX", wl: "45/37", pct: "54.9%" },
-    { rank: 8, name: "开拓者", abbr: "POR", wl: "42/40", pct: "51.2%" },
-    { rank: 9, name: "快船", abbr: "LAC", wl: "42/40", pct: "51.2%" },
-    { rank: 10, name: "勇士", abbr: "GSW", wl: "37/45", pct: "45.1%" },
-    { rank: 11, name: "鹈鹕", abbr: "NOP", wl: "26/56", pct: "31.7%" },
-    { rank: 12, name: "独行侠", abbr: "DAL", wl: "26/56", pct: "31.7%" },
-    { rank: 13, name: "灰熊", abbr: "MEM", wl: "25/57", pct: "30.5%" },
-    { rank: 14, name: "国王", abbr: "SAC", wl: "22/60", pct: "26.8%" },
-    { rank: 15, name: "爵士", abbr: "UTA", wl: "22/60", pct: "26.8%" },
+    { rank: 1, name: "雷霆", abbr: "okc", wl: "64/18", pct: "78%" },
+    { rank: 2, name: "马刺", abbr: "sas", wl: "62/20", pct: "75.6%" },
+    { rank: 3, name: "掘金", abbr: "den", wl: "54/28", pct: "65.9%" },
+    { rank: 4, name: "湖人", abbr: "lal", wl: "53/29", pct: "64.6%" },
+    { rank: 5, name: "火箭", abbr: "hou", wl: "52/30", pct: "63.4%" },
+    { rank: 6, name: "森林狼", abbr: "min", wl: "49/33", pct: "59.8%" },
+    { rank: 7, name: "太阳", abbr: "phx", wl: "45/37", pct: "54.9%" },
+    { rank: 8, name: "开拓者", abbr: "por", wl: "42/40", pct: "51.2%" },
+    { rank: 9, name: "快船", abbr: "lac", wl: "42/40", pct: "51.2%" },
+    { rank: 10, name: "勇士", abbr: "gsw", wl: "37/45", pct: "45.1%" },
+    { rank: 11, name: "鹈鹕", abbr: "no", wl: "26/56", pct: "31.7%" }, // 修正：鹈鹕在 ESPN 是 no
+    { rank: 12, name: "独行侠", abbr: "dal", wl: "26/56", pct: "31.7%" },
+    { rank: 13, name: "灰熊", abbr: "mem", wl: "25/57", pct: "30.5%" },
+    { rank: 14, name: "国王", abbr: "sac", wl: "22/60", pct: "26.8%" },
+    { rank: 15, name: "爵士", abbr: "utah", wl: "22/60", pct: "26.8%" }, // 修正：爵士在 ESPN 是 utah
   ],
   east: [
-    { rank: 1, name: "活塞", abbr: "DET", wl: "60/22", pct: "73.2%" },
-    { rank: 2, name: "凯尔特人", abbr: "BOS", wl: "56/26", pct: "68.3%" },
-    { rank: 3, name: "尼克斯", abbr: "NYK", wl: "53/29", pct: "64.6%" },
-    { rank: 4, name: "骑士", abbr: "CLE", wl: "52/30", pct: "63.4%" },
-    { rank: 5, name: "猛龙", abbr: "TOR", wl: "46/36", pct: "56.1%" },
-    { rank: 6, name: "老鹰", abbr: "ATL", wl: "46/36", pct: "56.1%" },
-    { rank: 7, name: "76人", abbr: "PHI", wl: "45/37", pct: "54.9%" },
-    { rank: 8, name: "魔术", abbr: "ORL", wl: "45/37", pct: "54.9%" },
-    { rank: 9, name: "黄蜂", abbr: "CHA", wl: "44/38", pct: "53.7%" },
-    { rank: 10, name: "热火", abbr: "MIA", wl: "43/39", pct: "52.4%" },
-    { rank: 11, name: "雄鹿", abbr: "MIL", wl: "32/50", pct: "39%" },
-    { rank: 12, name: "公牛", abbr: "CHI", wl: "31/51", pct: "37.8%" },
-    { rank: 13, name: "篮网", abbr: "BKN", wl: "20/62", pct: "24.4%" },
-    { rank: 14, name: "步行者", abbr: "IND", wl: "19/63", pct: "23.2%" },
-    { rank: 15, name: "奇才", abbr: "WAS", wl: "17/65", pct: "20.7%" },
+    { rank: 1, name: "活塞", abbr: "det", wl: "60/22", pct: "73.2%" },
+    { rank: 2, name: "凯尔特人", abbr: "bos", wl: "56/26", pct: "68.3%" },
+    { rank: 3, name: "尼克斯", abbr: "nyk", wl: "53/29", pct: "64.6%" },
+    { rank: 4, name: "骑士", abbr: "cle", wl: "52/30", pct: "63.4%" },
+    { rank: 5, name: "猛龙", abbr: "tor", wl: "46/36", pct: "56.1%" },
+    { rank: 6, name: "老鹰", abbr: "atl", wl: "46/36", pct: "56.1%" },
+    { rank: 7, name: "76人", abbr: "phi", wl: "45/37", pct: "54.9%" },
+    { rank: 8, name: "魔术", abbr: "orl", wl: "45/37", pct: "54.9%" },
+    { rank: 9, name: "黄蜂", abbr: "cha", wl: "44/38", pct: "53.7%" },
+    { rank: 10, name: "热火", abbr: "mia", wl: "43/39", pct: "52.4%" },
+    { rank: 11, name: "雄鹿", abbr: "mil", wl: "32/50", pct: "39%" },
+    { rank: 12, name: "公牛", abbr: "chi", wl: "31/51", pct: "37.8%" },
+    { rank: 13, name: "篮网", abbr: "bkn", wl: "20/62", pct: "24.4%" },
+    { rank: 14, name: "步行者", abbr: "ind", wl: "19/63", pct: "23.2%" },
+    { rank: 15, name: "奇才", abbr: "was", wl: "17/65", pct: "20.7%" },
   ]
+};
+
+// 辅助工具：处理特殊的 ESPN 缩写
+const getEspnAbbr = (abbr: string) => {
+  const map: Record<string, string> = {
+    "nop": "no",
+    "uta": "utah",
+    "brk": "bkn",
+    "cho": "cha"
+  };
+  return map[abbr.toLowerCase()] || abbr.toLowerCase();
 };
 
 const SeriesCard = ({ t1, t2, score, seed1, seed2 }: any) => (
   <div className="bg-[#16191d] border border-zinc-800 p-3 rounded-xl w-44 hover:border-blue-500 transition-all shadow-lg group">
     <div className="flex justify-between items-center mb-2">
       <div className="flex items-center gap-2">
-        <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${t1.toLowerCase()}.png`} className="w-5 h-5" />
+        <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${getEspnAbbr(t1)}.png`} className="w-5 h-5" />
         <span className={`font-black italic text-[10px] ${parseInt(score.split('-')[0]) >= 4 ? 'text-blue-500' : 'text-white'}`}>{t1} {seed1 && <span className="text-zinc-600 not-italic">({seed1})</span>}</span>
       </div>
       <span className="font-mono text-xs font-black">{score.split('-')[0]}</span>
     </div>
     <div className="flex justify-between items-center">
       <div className="flex items-center gap-2">
-        <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${t2.toLowerCase()}.png`} className="w-5 h-5" />
+        <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${getEspnAbbr(t2)}.png`} className="w-5 h-5" />
         <span className={`font-black italic text-[10px] ${parseInt(score.split('-')[1]) >= 4 ? 'text-blue-500' : 'text-white'}`}>{t2} {seed2 && <span className="text-zinc-600 not-italic">({seed2})</span>}</span>
       </div>
       <span className="font-mono text-xs font-black">{score.split('-')[1]}</span>
@@ -94,17 +105,15 @@ const SeriesCard = ({ t1, t2, score, seed1, seed2 }: any) => (
 export default function PlayoffsPage() {
   return (
     <div className="min-h-screen bg-[#0b0e11] text-white font-sans p-6 md:p-12">
-      {/* 导航 */}
       <nav className="max-w-7xl mx-auto flex justify-between items-center mb-16 border-b border-zinc-800 pb-8">
         <Link href="/"><h1 className="text-2xl font-black italic tracking-tighter">ME1TEN<span className="text-blue-500">.BRACKET</span></h1></Link>
         <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-zinc-500">
-          <Link href="/" className="hover:text-white">Home</Link>
-          <Link href="/standings" className="hover:text-white">Standings</Link>
+          <Link href="/" className="hover:text-white transition-colors">Home</Link>
+          <Link href="/standings" className="hover:text-white transition-colors">Standings</Link>
           <Link href="/playoffs" className="text-blue-500 underline underline-offset-8">Playoffs</Link>
         </div>
       </nav>
 
-      {/* 季后赛树状图部分 */}
       <main className="max-w-7xl mx-auto overflow-x-auto pb-32">
         <div className="text-center mb-24">
           <h2 className="text-7xl font-black italic uppercase tracking-tighter">NBA Playoffs <span className="text-blue-500">2026</span></h2>
@@ -136,15 +145,15 @@ export default function PlayoffsPage() {
                 <div className="flex flex-col gap-10">
                   <div className="flex items-center justify-between">
                     <img src="https://a.espncdn.com/i/teamlogos/nba/500/sas.png" className="w-16 h-16 object-contain" />
-                    <span className="text-6xl font-black italic">{BRACKET_2026.finals.score.split('-')[0]}</span>
+                    <span className="text-6xl font-black italic">1</span>
                   </div>
                   <div className="text-zinc-800 font-black italic text-2xl tracking-tighter">VS</div>
                   <div className="flex items-center justify-between">
                     <img src="https://a.espncdn.com/i/teamlogos/nba/500/nyk.png" className="w-16 h-16 object-contain" />
-                    <span className="text-6xl font-black italic">{BRACKET_2026.finals.score.split('-')[1]}</span>
+                    <span className="text-6xl font-black italic text-zinc-500">2</span>
                   </div>
                 </div>
-                <p className="mt-12 text-[10px] font-black text-zinc-500 uppercase tracking-widest">{BRACKET_2026.finals.status}</p>
+                <p className="mt-12 text-[10px] font-black text-zinc-500 uppercase tracking-widest">FINALS IN PROGRESS</p>
               </div>
             </div>
           </div>
@@ -167,10 +176,10 @@ export default function PlayoffsPage() {
         </div>
       </main>
 
-      {/* 常规赛排名部分 (根据图片录入) */}
+      {/* 常规赛排名部分 */}
       <section className="max-w-7xl mx-auto border-t border-zinc-800 pt-20 pb-40">
         <div className="text-center mb-16">
-          <h3 className="text-4xl font-black italic uppercase tracking-tighter">Regular Season <span className="text-blue-500">Standings</span></h3>
+          <h3 className="text-4xl font-black italic uppercase tracking-tighter text-zinc-200">Regular Season <span className="text-blue-500">Standings</span></h3>
           <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.4em] mt-2">2025-2026 Official Record Terminal</p>
         </div>
 
@@ -193,7 +202,7 @@ export default function PlayoffsPage() {
                     <tr key={team.rank} className="border-b border-zinc-900 hover:bg-zinc-800/50 transition-colors group">
                       <td className="p-4 px-6 font-mono text-zinc-600 text-xs">{team.rank}</td>
                       <td className="p-4 flex items-center gap-3">
-                        <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${team.abbr.toLowerCase()}.png`} className="w-6 h-6" />
+                        <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${team.abbr}.png`} className="w-6 h-6 object-contain" />
                         <span className="font-black italic uppercase group-hover:text-blue-400 transition-colors">{team.name}</span>
                       </td>
                       <td className="p-4 font-mono font-bold text-zinc-300">{team.wl}</td>
@@ -223,7 +232,7 @@ export default function PlayoffsPage() {
                     <tr key={team.rank} className="border-b border-zinc-900 hover:bg-zinc-800/50 transition-colors group">
                       <td className="p-4 px-6 font-mono text-zinc-600 text-xs">{team.rank}</td>
                       <td className="p-4 flex items-center gap-3">
-                        <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${team.abbr.toLowerCase()}.png`} className="w-6 h-6" />
+                        <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${team.abbr}.png`} className="w-6 h-6 object-contain" />
                         <span className="font-black italic uppercase group-hover:text-blue-400 transition-colors">{team.name}</span>
                       </td>
                       <td className="p-4 font-mono font-bold text-zinc-300">{team.wl}</td>
@@ -236,10 +245,6 @@ export default function PlayoffsPage() {
           </div>
         </div>
       </section>
-
-      <footer className="text-center opacity-20 text-[9px] font-bold uppercase tracking-[0.5em] pb-10">
-        Me1ten Postseason Terminal • Data Integrated from Satellite Images
-      </footer>
     </div>
   );
 }
