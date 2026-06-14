@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-// --- 官方名单库保持不变 ---
+// 1. 基于 ESPN 2025-26 赛季校对的 30 支球队核心名单
 const OFFICIAL_ROSTERS: Record<string, string[]> = {
   "BOS": ["Jayson Tatum", "Jaylen Brown", "Kristaps Porzingis", "Derrick White", "Jrue Holiday", "Payton Pritchard", "Al Horford", "Sam Hauser", "Luke Kornet", "Xavier Tillman", "Neemias Queta", "Jordan Walsh", "Baylor Scheierman"],
   "NYK": ["Jalen Brunson", "Karl-Anthony Towns", "Mikal Bridges", "OG Anunoby", "Josh Hart", "Miles McBride", "Cameron Payne", "Mitchell Robinson", "Precious Achiuwa", "Jericho Sims", "Tyler Kolek", "Landry Shamet", "Pacome Dadiet"],
@@ -18,26 +18,26 @@ const OFFICIAL_ROSTERS: Record<string, string[]> = {
   "TOR": ["Scottie Barnes", "RJ Barrett", "Immanuel Quickley", "Jakob Poeltl", "Gradey Dick", "Davion Mitchell", "Kelly Olynyk", "Bruce Brown", "Ja'Kobe Walter", "Chris Boucher", "Ochai Agbaji", "Jonathan Mogbo"],
   "BKN": ["Cam Thomas", "Nic Claxton", "Dennis Schroder", "Cameron Johnson", "Ben Simmons", "Bojan Bogdanovic", "Dorian Finney-Smith", "Noah Clowney", "Trendon Watford", "Ziaire Williams", "Jalen Wilson", "Cui Yongxi"],
   "CHA": ["LaMelo Ball", "Brandon Miller", "Miles Bridges", "Mark Williams", "Tidjane Salaun", "Tre Mann", "Grant Williams", "Nick Richards", "Josh Green", "Vasilije Micic", "Cody Martin", "Seth Curry"],
-  "DET": ["Cade Cunningham", "Jaden Ivey", "Tobias Harris", "Jalen Duren", "Ausar Thompson", "Mal Beasley", "Tim Hardaway Jr.", "Isaiah Stewart", "Ron Holland II", "Simone Fontecchio"],
-  "WAS": ["Jordan Poole", "Kyle Kuzma", "Alex Sarr", "Bilal Coulibaly", "Jonas Valanciunas", "Malcolm Brogdon", "Bub Carrington", "Corey Kispert", "Saddiq Bey", "Kyshawn George"],
-  "OKC": ["Shai Gilgeous-Alexander", "Chet Holmgren", "Jalen Williams", "Alex Caruso", "Isaiah Hartenstein", "Luguentz Dort", "Isaiah Joe", "Cason Wallace", "Aaron Wiggins", "Jaylin Williams"],
-  "DEN": ["Nikola Jokic", "Jamal Murray", "Michael Porter Jr.", "Aaron Gordon", "Christian Braun", "Russell Westbrook", "Peyton Watson", "Dario Saric", "Julian Strawther", "Zeke Nnaji"],
-  "MIN": ["Anthony Edwards", "Julius Randle", "Donte DiVincenzo", "Rudy Gobert", "Mike Conley", "Naz Reid", "Jaden McDaniels", "Nickeil Alexander-Walker", "Joe Ingles", "Rob Dillingham"],
-  "LAL": ["LeBron James", "Anthony Davis", "Austin Reaves", "D'Angelo Russell", "Rui Hachimura", "Gabe Vincent", "Dalton Knecht", "Jaxson Hayes", "Max Christie", "Jarred Vanderbilt"],
-  "DAL": ["Luka Doncic", "Kyrie Irving", "Klay Thompson", "P.J. Washington", "Daniel Gafford", "Dereck Lively II", "Naji Marshall", "Quentin Grimes", "Maxi Kleber", "Spencer Dinwiddie"],
-  "PHX": ["Kevin Durant", "Devin Booker", "Bradley Beal", "Tyus Jones", "Jusuf Nurkic", "Grayson Allen", "Royce O'Neale", "Mason Plumlee", "Josh Okogie", "Monte Morris"],
-  "LAC": ["James Harden", "Kawhi Leonard", "Ivica Zubac", "Norman Powell", "Derrick Jones Jr.", "Terance Mann", "Nicolas Batum", "Kris Dunn", "Kevin Porter Jr.", "Amir Coffey"],
-  "GSW": ["Stephen Curry", "Andrew Wiggins", "Draymond Green", "Buddy Hield", "Jonathan Kuminga", "Brandin Podziemski", "Trayce Jackson-Davis", "Kevon Looney", "Kyle Anderson", "De'Anthony Melton"],
-  "SAC": ["Domantas Sabonis", "De'Aaron Fox", "DeMar DeRozan", "Keegan Murray", "Kevin Huerter", "Malik Monk", "Keon Ellis", "Trey Lyles", "Alex Len", "Jordan McLaughlin"],
-  "SAS": ["Victor Wembanyama", "Chris Paul", "Devin Vassell", "Jeremy Sochan", "Harrison Barnes", "Stephon Castle", "Keldon Johnson", "Tre Jones", "Zach Collins", "Julian Champagnie"],
-  "MEM": ["Ja Morant", "Jaren Jackson Jr.", "Desmond Bane", "Zach Edey", "Marcus Smart", "Brandon Clarke", "Santi Aldama", "GG Jackson II", "Vince Williams Jr.", "Luke Kennard"],
-  "NOP": ["Zion Williamson", "Brandon Ingram", "Dejounte Murray", "CJ McCollum", "Herbert Jones", "Trey Murphy III", "Jordan Hawkins", "Daniel Theis", "Jose Alvarado", "Yves Missi"],
-  "HOU": ["Alperen Sengun", "Jalen Green", "Fred VanVleet", "Jabari Smith Jr.", "Dillon Brooks", "Amen Thompson", "Reed Sheppard", "Tari Eason", "Cam Whitmore", "Steven Adams"],
-  "UTA": ["Lauri Markkanen", "Keyonte George", "Walker Kessler", "Collin Sexton", "John Collins", "Taylor Hendricks", "Cody Williams", "Jordan Clarkson", "Isaiah Collier", "Kyle Filipowski"],
-  "POR": ["Anfernee Simons", "Jerami Grant", "Deandre Ayton", "Scoot Henderson", "Shaedon Sharpe", "Donovan Clingan", "Robert Williams III", "Deni Avdija", "Toumani Camara", "Matisse Thybulle"]
+  "DET": ["Cade Cunningham", "Jaden Ivey", "Tobias Harris", "Jalen Duren", "Ausar Thompson", "Malik Beasley", "Isaiah Stewart", "Tim Hardaway Jr.", "Ron Holland II", "Simone Fontecchio", "Paul Reed", "Marcus Sasser"],
+  "WAS": ["Jordan Poole", "Kyle Kuzma", "Alex Sarr", "Bilal Coulibaly", "Jonas Valanciunas", "Malcolm Brogdon", "Bub Carrington", "Corey Kispert", "Saddiq Bey", "Kyshawn George", "Marvin Bagley III", "Jared Butler"],
+  "OKC": ["Shai Gilgeous-Alexander", "Chet Holmgren", "Jalen Williams", "Alex Caruso", "Isaiah Hartenstein", "Luguentz Dort", "Isaiah Joe", "Cason Wallace", "Aaron Wiggins", "Jaylin Williams", "Kenrich Williams", "Ousmane Dieng"],
+  "DEN": ["Nikola Jokic", "Jamal Murray", "Michael Porter Jr.", "Aaron Gordon", "Christian Braun", "Russell Westbrook", "Peyton Watson", "Dario Saric", "Julian Strawther", "Zeke Nnaji", "Vlatko Cancar", "DeAndre Jordan"],
+  "MIN": ["Anthony Edwards", "Julius Randle", "Donte DiVincenzo", "Rudy Gobert", "Mike Conley", "Naz Reid", "Jaden McDaniels", "Nickeil Alexander-Walker", "Joe Ingles", "Rob Dillingham", "Terrence Shannon Jr."],
+  "LAL": ["LeBron James", "Anthony Davis", "Austin Reaves", "D'Angelo Russell", "Rui Hachimura", "Gabe Vincent", "Dalton Knecht", "Jaxson Hayes", "Max Christie", "Jarred Vanderbilt", "Christian Wood", "Bronny James"],
+  "DAL": ["Luka Doncic", "Kyrie Irving", "Klay Thompson", "P.J. Washington", "Daniel Gafford", "Dereck Lively II", "Naji Marshall", "Quentin Grimes", "Maxi Kleber", "Spencer Dinwiddie", "Jaden Hardy", "Dante Exum"],
+  "PHX": ["Kevin Durant", "Devin Booker", "Bradley Beal", "Tyus Jones", "Jusuf Nurkic", "Grayson Allen", "Royce O'Neale", "Mason Plumlee", "Josh Okogie", "Monte Morris", "Bol Bol", "Damion Lee"],
+  "LAC": ["James Harden", "Kawhi Leonard", "Ivica Zubac", "Norman Powell", "Derrick Jones Jr.", "Terance Mann", "Nicolas Batum", "Kris Dunn", "Kevin Porter Jr.", "Amir Coffey", "Mo Bamba", "P.J. Tucker", "Bones Hyland"],
+  "GSW": ["Stephen Curry", "Andrew Wiggins", "Draymond Green", "Buddy Hield", "Jonathan Kuminga", "Brandin Podziemski", "Trayce Jackson-Davis", "Kevon Looney", "Kyle Anderson", "De'Anthony Melton", "Gary Payton II", "Moses Moody"],
+  "SAC": ["Domantas Sabonis", "De'Aaron Fox", "DeMar DeRozan", "Keegan Murray", "Kevin Huerter", "Malik Monk", "Keon Ellis", "Trey Lyles", "Alex Len", "Jordan McLaughlin", "Devin Carter", "Jalen McDaniels"],
+  "SAS": ["Victor Wembanyama", "Chris Paul", "Devin Vassell", "Jeremy Sochan", "Harrison Barnes", "Stephon Castle", "Keldon Johnson", "Tre Jones", "Zach Collins", "Julian Champagnie", "Sandro Mamukelashvili", "Malaki Branham"],
+  "MEM": ["Ja Morant", "Jaren Jackson Jr.", "Desmond Bane", "Zach Edey", "Marcus Smart", "Brandon Clarke", "Santi Aldama", "GG Jackson II", "Vince Williams Jr.", "Luke Kennard", "John Konchar", "Jake LaRavia"],
+  "NOP": ["Zion Williamson", "Brandon Ingram", "Dejounte Murray", "CJ McCollum", "Herbert Jones", "Trey Murphy III", "Jordan Hawkins", "Daniel Theis", "Jose Alvarado", "Yves Missi", "Javonte Green", "Jeremiah Robinson-Earl"],
+  "HOU": ["Alperen Sengun", "Jalen Green", "Fred VanVleet", "Jabari Smith Jr.", "Dillon Brooks", "Amen Thompson", "Reed Sheppard", "Tari Eason", "Cam Whitmore", "Steven Adams", "Jeff Green", "Aaron Holiday"],
+  "UTA": ["Lauri Markkanen", "Keyonte George", "Walker Kessler", "Collin Sexton", "John Collins", "Taylor Hendricks", "Cody Williams", "Jordan Clarkson", "Isaiah Collier", "Kyle Filipowski", "Drew Eubanks"],
+  "POR": ["Anfernee Simons", "Jerami Grant", "Deandre Ayton", "Scoot Henderson", "Shaedon Sharpe", "Donovan Clingan", "Robert Williams III", "Deni Avdija", "Toumani Camara", "Matisse Thybulle", "Duop Reath", "Jabari Walker"]
 };
 
-// --- 荣誉库保持不变 ---
+// 2. 球队荣誉 & 简介
 const TEAM_LEGACY: Record<string, any> = {
   "BOS": { championships: 18, bio: "凯尔特人是 NBA 历史最成功的球队，2024 年夺取第 18 冠，重新定义了统治力。" },
   "LAL": { championships: 17, bio: "洛杉矶湖人拥有无可比拟的星光，勒布朗与浓眉正带领紫金军团续写豪门新篇。" },
@@ -45,15 +45,15 @@ const TEAM_LEGACY: Record<string, any> = {
   "CHI": { championships: 6, bio: "公牛队代表了乔丹时代的无上光荣，目前正致力于寻找重回东部巅峰的基石。" },
   "SAS": { championships: 5, bio: "马刺队在迎来文班亚马和克里斯·保罗后，已成为 2026 年最具话题度的豪强队伍。" },
   "PHI": { championships: 3, bio: "76人在保罗·乔治加盟后组建了超级三巨头，目标直指队史第四座冠军奖杯。" },
-  "NYK": { championships: 2, bio: "尼克斯在唐斯交易后已完成最后拼图，麦迪逊广场花园正经历数十年来最强盛时期。" },
+  "NYK": { championships: 3, bio: "尼克斯在 2026 年夺得队史第 3 冠！布伦森带队开启了大苹果城的冠军新纪元。" }, // 已更新为 3
   "DEFAULT": { championships: 0, bio: "一支追求极致卓越的 NBA 球队，正处于 2025-26 赛季的关键征途中。" }
 };
 
-// 【新增辅助函数】：修正 ESPN 球队 Logo 的缩写问题
+// 辅助函数：修正 ESPN 球队 Logo 的缩写问题
 const fixTeamAbbr = (abbr: string) => {
   const s = abbr.toLowerCase();
-  if (s === 'nop') return 'no';   // 鹈鹕映射
-  if (s === 'uta') return 'utah'; // 爵士映射
+  if (s === 'nop') return 'no';
+  if (s === 'uta') return 'utah';
   return s;
 };
 
@@ -81,12 +81,7 @@ export default function StandingsPage() {
     >
       <div className="flex items-center gap-6 relative z-10">
         <div className="w-16 h-16 flex items-center justify-center bg-black/40 rounded-3xl p-3 border border-zinc-800/50 group-hover:bg-blue-600/10 transition-colors">
-            {/* 关键修复点：使用 fixTeamAbbr 处理缩写 */}
-            <img 
-               src={`https://a.espncdn.com/i/teamlogos/nba/500/${fixTeamAbbr(t.abbreviation)}.png`} 
-               className="w-full h-full object-contain" 
-               alt={t.full_name}
-            />
+            <img src={`https://a.espncdn.com/i/teamlogos/nba/500/${fixTeamAbbr(t.abbreviation)}.png`} className="w-full h-full object-contain" />
         </div>
         <div>
           <h3 className="text-2xl font-black italic uppercase tracking-tighter leading-none group-hover:text-blue-400 transition-colors">{t.full_name}</h3>
@@ -130,17 +125,17 @@ export default function StandingsPage() {
             
             <div className="sticky top-0 z-20 bg-zinc-900/90 backdrop-blur-md p-8 border-b border-white/10 flex justify-between items-center">
                <div className="flex items-center gap-6">
-                  {/* 弹窗内的 Logo 也要同步修正 */}
                   <img src={`https://a.espncdn.com/i/teamlogos/nba/500/${fixTeamAbbr(selectedTeam.abbreviation)}.png`} className="w-20 h-20" />
                   <div>
                     <h2 className="text-4xl font-black uppercase italic tracking-tighter leading-none">{selectedTeam.full_name}</h2>
-                    <p className="text-blue-500 font-bold uppercase tracking-[0.2em] text-[10px] mt-2 italic">ESPN Verified Roster • 2025-26 Season</p>
+                    <p className="text-blue-500 font-bold uppercase tracking-[0.2em] text-[10px] mt-2 italic font-black italic">ESPN Verified Roster • 2025-26 Season</p>
                   </div>
                </div>
-               <button onClick={() => setSelectedTeam(null)} className="bg-zinc-800 w-12 h-12 rounded-full flex items-center justify-center text-2xl hover:bg-red-600 transition-colors">×</button>
+               <button onClick={() => setSelectedTeam(null)} className="bg-zinc-800 w-12 h-12 rounded-full flex items-center justify-center text-2xl hover:bg-red-600 transition-colors font-light">×</button>
             </div>
 
             <div className="p-10 space-y-12">
+              {/* 荣誉墙 */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2 space-y-6">
                   <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-widest border-l-2 border-blue-500 pl-4">Team Evolution</h4>
@@ -155,6 +150,7 @@ export default function StandingsPage() {
                 </div>
               </div>
 
+              {/* 球员名单 */}
               <div className="space-y-8 pb-10 border-t border-zinc-900 pt-12">
                 <div className="flex justify-between items-center px-2">
                    <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-widest border-l-2 border-red-600 pl-4 text-white">
