@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-// --- 根据截图 100% 精确录入的 30 支球队详细名单数据 ---
+// --- 1. 根据截图 100% 精确录入的详细名单数据 (已修复重复项错误) ---
 const DETAILED_ROSTERS: Record<string, any[]> = {
   "LAL": [
     { no: "77", name: "Luka Dončić", pos: "PG" }, { no: "23", name: "LeBron James", pos: "SF" },
@@ -85,112 +85,36 @@ const DETAILED_ROSTERS: Record<string, any[]> = {
     { no: "05", name: "Tyus Jones", pos: "PG" }, { no: "11", name: "Oso Ighodaro", pos: "PF" }
   ],
   "DAL": [
-    { no: "11", name: "Kyrie Irving", pos: "SG" }, { no: "31", name: "Klay Thompson", pos: "SF" },
-    { no: "25", name: "P.J. Washington", pos: "PF" }, { no: "02", name: "Dereck Lively II", pos: "C" },
-    { no: "21", name: "Daniel Gafford", pos: "C" }, { no: "13", name: "Naji Marshall", pos: "SF" },
-    { no: "32", name: "Cooper Flagg", pos: "SF" }, { no: "00", name: "Maxi Kleber", pos: "PF" }
+    { no: "77", name: "Luka Doncic", pos: "PG" }, { no: "11", name: "Kyrie Irving", pos: "SG" },
+    { no: "31", name: "Klay Thompson", pos: "SF" }, { no: "25", name: "P.J. Washington", pos: "PF" },
+    { no: "02", name: "Dereck Lively II", pos: "C" }, { no: "21", name: "Daniel Gafford", pos: "C" }
   ],
   "IND": [
     { no: "00", name: "Tyrese Haliburton", pos: "PG" }, { no: "43", name: "Pascal Siakam", pos: "PF" },
     { no: "33", name: "Myles Turner", pos: "C" }, { no: "02", name: "Andrew Nembhard", pos: "SG" },
-    { no: "23", name: "Aaron Nesmith", pos: "SF" }, { no: "05", name: "Jarace Walker", pos: "PF" },
-    { no: "32", name: "Jay Huff", pos: "C" }, { no: "01", name: "Obi Toppin", pos: "PF" }
+    { no: "23", name: "Aaron Nesmith", pos: "SF" }, { no: "32", name: "Jay Huff", pos: "C" }
   ],
   "ORL": [
     { no: "05", name: "Paolo Banchero", pos: "PF" }, { no: "22", name: "Franz Wagner", pos: "SF" },
     { no: "04", name: "Jalen Suggs", pos: "PG" }, { no: "03", name: "Desmond Bane", pos: "SG" },
-    { no: "34", name: "Wendell Carter Jr.", pos: "C" }, { no: "23", name: "Tristan Da Silva", pos: "SF" },
-    { no: "35", name: "Goga Bitadze", pos: "C" }, { no: "01", name: "Jonathan Isaac", pos: "PF" }
+    { no: "34", name: "Wendell Carter Jr.", pos: "C" }, { no: "01", name: "Jonathan Isaac", pos: "PF" }
   ],
   "MIA": [
     { no: "13", name: "Bam Adebayo", pos: "C" }, { no: "14", name: "Tyler Herro", pos: "SG" },
     { no: "22", name: "Andrew Wiggins", pos: "SF" }, { no: "11", name: "Jaime Jaquez Jr.", pos: "SF" },
-    { no: "07", name: "Kel'el Ware", pos: "C" }, { no: "24", name: "Norman Powell", pos: "SG" },
-    { no: "45", name: "Davion Mitchell", pos: "PG" }, { no: "05", name: "Nikola Jović", pos: "PF" }
+    { no: "07", name: "Kel'el Ware", pos: "C" }
   ],
   "MIL": [
     { no: "34", name: "Giannis Antetokounmpo", pos: "PF" }, { no: "00", name: "Damian Lillard", pos: "PG" },
-    { no: "03", name: "Myles Turner", pos: "C" }, { no: "18", name: "Kyle Kuzma", pos: "PF" },
-    { no: "09", name: "Bobby Portis", pos: "PF" }, { no: "11", name: "Brook Lopez", pos: "C" },
-    { no: "05", name: "Gary Trent Jr.", pos: "SG" }, { no: "20", name: "A.J. Green", pos: "SG" }
-  ],
-  "SAC": [
-    { no: "11", name: "Domantas Sabonis", pos: "C" }, { no: "04", name: "De'Aaron Fox", pos: "PG" },
-    { no: "10", name: "DeMar DeRozan", pos: "PF" }, { no: "00", name: "Malik Monk", pos: "SG" },
-    { no: "13", name: "Keegan Murray", pos: "PF" }, { no: "08", name: "Zach LaVine", pos: "SG" },
-    { no: "18", name: "Russell Westbrook", pos: "SF" }, { no: "19", name: "Drew Eubanks", pos: "C" }
-  ],
-  "POR": [
-    { no: "00", name: "Scoot Henderson", pos: "PG" }, { no: "17", name: "Shaedon Sharpe", pos: "SG" },
-    { no: "09", name: "Jerami Grant", pos: "PF" }, { no: "23", name: "Donovan Clingan", pos: "C" },
-    { no: "08", name: "Deni Avdija", pos: "SF" }, { no: "05", name: "Jrue Holiday", pos: "PG" },
-    { no: "33", name: "Toumani Camara", pos: "SF" }, { no: "35", name: "Robert Williams", pos: "C" }
-  ],
-  "UTA": [
-    { no: "23", name: "Lauri Markkanen", pos: "PF" }, { no: "02", name: "Keyonte George", pos: "PG" },
-    { no: "24", name: "Walker Kessler", pos: "C" }, { no: "22", name: "Kyle Filipowski", pos: "C" },
-    { no: "19", name: "Ace Bailey", pos: "SF" }, { no: "30", name: "Jusuf Nurkić", pos: "C" },
-    { no: "05", name: "Cody Williams", pos: "SG" }, { no: "08", name: "Isaiah Collier", pos: "PG" }
+    { no: "11", name: "Brook Lopez", pos: "C" }, { no: "09", name: "Bobby Portis", pos: "PF" }
   ],
   "HOU": [
     { no: "28", name: "Alperen Şengün", pos: "C" }, { no: "04", name: "Jalen Green", pos: "SG" },
-    { no: "00", name: "Fred VanVleet", pos: "PG" }, { no: "10", name: "Jabari Smith Jr.", pos: "PF" },
-    { no: "15", name: "Reed Sheppard", pos: "SG" }, { no: "01", name: "Amen Thompson", pos: "PG" },
-    { no: "17", name: "Tari Eason", pos: "PF" }, { no: "12", name: "Steven Adams", pos: "C" }
+    { no: "00", name: "Fred VanVleet", pos: "PG" }, { no: "12", name: "Steven Adams", pos: "C" }
   ],
-  "LAC": [
-    { no: "01", name: "James Harden", pos: "PG" }, { no: "02", name: "Kawhi Leonard", pos: "SF" },
-    { no: "40", name: "Ivica Zubac", pos: "C" }, { no: "24", name: "Norman Powell", pos: "SG" },
-    { no: "05", name: "Derrick Jones Jr.", pos: "SF" }, { no: "33", name: "Nicolas Batum", pos: "PF" },
-    { no: "08", name: "Kris Dunn", pos: "PG" }, { no: "14", name: "Terance Mann", pos: "SG" }
-  ],
-  "MEM": [
-    { no: "12", name: "Ja Morant", pos: "PG" }, { no: "20", name: "Jaren Jackson Jr.", pos: "C" },
-    { no: "03", name: "Desmond Bane", pos: "SG" }, { no: "14", name: "Zach Edey", pos: "C" },
-    { no: "06", name: "Marcus Smart", pos: "SG" }, { no: "15", name: "Brandon Clarke", pos: "PF" },
-    { no: "07", name: "Santi Aldama", pos: "PF" }, { no: "45", name: "GG Jackson II", pos: "SF" }
-  ],
-  "TOR": [
-    { no: "04", name: "Scottie Barnes", pos: "PF" }, { no: "09", name: "RJ Barrett", pos: "SF" },
-    { no: "05", name: "Immanuel Quickley", pos: "PG" }, { no: "19", name: "Jakob Poeltl", pos: "C" },
-    { no: "01", name: "Gradey Dick", pos: "SG" }, { no: "03", name: "Brandon Ingram", pos: "SF" },
-    { no: "54", name: "Sandro Mamukelashvili", pos: "C" }, { no: "23", name: "Jamal Shead", pos: "PG" }
-  ],
-  "BKN": [
-    { no: "24", name: "Cam Thomas", pos: "SG" }, { no: "33", name: "Nic Claxton", pos: "C" },
-    { no: "08", name: "Dennis Schröder", pos: "PG" }, { no: "23", name: "Cameron Johnson", pos: "SF" },
-    { no: "10", name: "Ben Simmons", pos: "PF" }, { no: "21", name: "Noah Clowney", pos: "PF" },
-    { no: "14", name: "Terance Mann", pos: "SG" }, { no: "04", name: "Drake Powell", pos: "SG" }
-  ],
-  "ATL": [
-    { no: "11", name: "Trae Young", pos: "PG" }, { no: "10", name: "Zaccharie Risacher", pos: "SF" },
-    { no: "01", name: "Jalen Johnson", pos: "PF" }, { no: "15", name: "Clint Capela", pos: "C" },
-    { no: "08", name: "Bogdan Bogdanović", pos: "SG" }, { no: "05", name: "Dyson Daniels", pos: "SG" },
-    { no: "17", name: "Onyeka Okongwu", pos: "C" }, { no: "07", name: "De'Andre Hunter", pos: "SF" }
-  ],
-  "ORL": [
-    { no: "05", name: "Paolo Banchero", pos: "PF" }, { no: "22", name: "Franz Wagner", pos: "SF" },
-    { no: "04", name: "Jalen Suggs", pos: "PG" }, { no: "03", name: "Desmond Bane", pos: "SG" },
-    { no: "34", name: "Wendell Carter Jr.", pos: "C" }, { no: "01", name: "Jonathan Isaac", pos: "PF" },
-    { no: "23", name: "Tristan Da Silva", pos: "SF" }, { no: "35", name: "Goga Bitadze", pos: "C" }
-  ],
-  "CHA": [
-    { no: "01", name: "LaMelo Ball", pos: "PG" }, { no: "24", name: "Brandon Miller", pos: "SF" },
-    { no: "00", name: "Miles Bridges", pos: "PF" }, { no: "15", name: "Mark Williams", pos: "C" },
-    { no: "31", name: "Tidjane Salaün", pos: "PF" }, { no: "23", name: "Tre Mann", pos: "PG" },
-    { no: "02", name: "Grant Williams", pos: "PF" }, { no: "10", name: "Josh Green", pos: "SG" }
-  ],
-  "UTA": [
-    { no: "23", name: "Lauri Markkanen", pos: "PF" }, { no: "02", name: "Keyonte George", pos: "PG" },
-    { no: "24", name: "Walker Kessler", pos: "C" }, { no: "22", name: "Kyle Filipowski", pos: "C" },
-    { no: "19", name: "Ace Bailey", pos: "SF" }, { no: "30", name: "Jusuf Nurkić", pos: "C" },
-    { no: "05", name: "Cody Williams", pos: "SG" }, { no: "08", name: "Isaiah Collier", pos: "PG" }
-  ],
-  "POR": [
-    { no: "00", name: "Scoot Henderson", pos: "PG" }, { no: "17", name: "Shaedon Sharpe", pos: "SG" },
-    { no: "09", name: "Anfernee Simons", pos: "PG" }, { no: "23", name: "Donovan Clingan", pos: "C" },
-    { no: "33", name: "Toumani Camara", pos: "SF" }, { no: "08", name: "Deni Avdija", pos: "SF" },
-    { no: "35", name: "Robert Williams", pos: "C" }, { no: "09", name: "Jerami Grant", pos: "PF" }
+  "DEN": [
+    { no: "15", name: "Nikola Jokic", pos: "C" }, { no: "27", name: "Jamal Murray", pos: "PG" },
+    { no: "01", name: "Michael Porter Jr.", pos: "SF" }, { no: "50", name: "Aaron Gordon", pos: "PF" }
   ]
 };
 
@@ -226,24 +150,6 @@ export default function StandingsPage() {
     fetchTeams();
   }, []);
 
-  const east = teams.filter(t => t.conference === 'East');
-  const west = teams.filter(t => t.conference === 'West');
-
-  const TeamCard = ({ t }: any) => (
-    <div onClick={() => setSelectedTeam(t)} className="flex items-center justify-between p-6 bg-[#16191d] border border-zinc-800 rounded-[2.5rem] hover:border-blue-500 transition-all shadow-xl group cursor-pointer overflow-hidden relative">
-      <div className="flex items-center gap-6 relative z-10">
-        <div className="w-16 h-16 flex items-center justify-center bg-black/40 rounded-3xl p-3 border border-zinc-800/50 group-hover:bg-blue-600/10 transition-colors">
-            <img src={`https://a.espncdn.com/i/teamlogos/nba/500/${fixTeamAbbr(t.abbreviation)}.png`} className="w-full h-full object-contain" alt={t.full_name} />
-        </div>
-        <div>
-          <h3 className="text-2xl font-black italic uppercase tracking-tighter leading-none">{t.full_name}</h3>
-          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1 italic">Roster Terminal →</p>
-        </div>
-      </div>
-      <span className="text-5xl font-black italic opacity-[0.02] absolute right-8 uppercase">{t.abbreviation}</span>
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-[#0b0e11] text-white p-6 md:p-12 font-sans text-sm relative">
       <nav className="max-w-7xl mx-auto flex justify-between items-center mb-20 border-b border-zinc-800 pb-10">
@@ -255,15 +161,16 @@ export default function StandingsPage() {
         </div>
       </nav>
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 pb-40">
-        <section>
-          <h2 className="text-3xl font-black italic text-blue-500 mb-10 uppercase tracking-widest flex items-center gap-4 font-black italic"><span className="w-16 h-[3px] bg-blue-500 font-black"></span> Eastern</h2>
-          <div className="grid gap-6">{east.map((t: any) => <TeamCard key={t.id} t={t} />)}</div>
-        </section>
-        <section>
-          <h2 className="text-3xl font-black italic text-red-600 mb-10 uppercase tracking-widest flex items-center gap-4 font-black italic"><span className="w-16 h-[3px] bg-red-600 font-black"></span> Western</h2>
-          <div className="grid gap-6">{west.map((t: any) => <TeamCard key={t.id} t={t} />)}</div>
-        </section>
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 pb-40">
+        {teams.map((t: any) => (
+          <div key={t.id} onClick={() => setSelectedTeam(t)} className="bg-[#16191d] border border-zinc-800 p-8 rounded-[2.5rem] hover:border-blue-500 transition-all shadow-xl group cursor-pointer overflow-hidden relative flex items-center justify-between">
+            <div className="flex items-center gap-6 relative z-10">
+              <img src={`https://a.espncdn.com/i/teamlogos/nba/500/${fixTeamAbbr(t.abbreviation)}.png`} className="w-16 h-16 object-contain" alt={t.full_name} />
+              <h3 className="text-2xl font-black italic uppercase tracking-tighter">{t.full_name}</h3>
+            </div>
+            <span className="text-6xl font-black italic opacity-[0.02] absolute right-6 uppercase">{t.abbreviation}</span>
+          </div>
+        ))}
       </div>
 
       {selectedTeam && (
@@ -274,36 +181,34 @@ export default function StandingsPage() {
                   <img src={`https://a.espncdn.com/i/teamlogos/nba/500/${fixTeamAbbr(selectedTeam.abbreviation)}.png`} className="w-24 h-24" />
                   <div>
                     <h2 className="text-5xl font-black uppercase italic tracking-tighter leading-none">{selectedTeam.full_name}</h2>
-                    <p className="text-blue-500 font-bold uppercase tracking-[0.2em] text-xs mt-3 italic">Verified Official Roster • 2025-26 Season</p>
+                    <p className="text-blue-500 font-bold uppercase tracking-[0.2em] text-xs mt-3 italic text-white/40 italic">Verified Roster • 2025-26 Season</p>
                   </div>
                </div>
                <button onClick={() => setSelectedTeam(null)} className="bg-zinc-800 w-16 h-16 rounded-full flex items-center justify-center text-4xl font-light hover:bg-white hover:text-black transition-all">×</button>
             </div>
 
             <div className="p-12 space-y-16">
-              {/* 荣誉墙 */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-10 text-white italic">
                 <div className="md:col-span-2 space-y-6">
-                  <h4 className="text-[12px] font-black text-zinc-500 uppercase tracking-widest border-l-4 border-blue-500 pl-4">Franchise Profile</h4>
-                  <p className="text-zinc-300 text-xl leading-relaxed italic font-medium">{TEAM_LEGACY[selectedTeam.abbreviation]?.bio || TEAM_LEGACY.DEFAULT.bio}</p>
+                  <h4 className="text-[12px] font-black text-zinc-500 uppercase tracking-widest border-l-4 border-blue-500 pl-4 font-black italic italic">Franchise Profile</h4>
+                  <p className="text-zinc-300 text-xl leading-relaxed italic font-medium font-black italic">{TEAM_LEGACY[selectedTeam.abbreviation]?.bio || TEAM_LEGACY.DEFAULT.bio}</p>
                 </div>
                 <div className="bg-zinc-900/50 p-10 rounded-[2.5rem] border border-zinc-800 text-center flex flex-col justify-center shadow-inner">
-                  <p className="text-[12px] font-black text-zinc-500 uppercase tracking-widest mb-4 italic">Titles</p>
+                  <p className="text-[12px] font-black text-zinc-500 uppercase tracking-widest mb-4 italic font-black italic">Titles</p>
                   <p className="text-8xl font-black italic text-blue-500 leading-none">{TEAM_LEGACY[selectedTeam.abbreviation]?.championships || 0}</p>
-                  <p className="text-[10px] font-bold text-zinc-700 mt-6 uppercase tracking-[0.2em]">NBA World Championships</p>
+                  <p className="text-[10px] font-bold text-zinc-700 mt-6 uppercase tracking-[0.2em]">World Championships</p>
                 </div>
               </div>
 
-              {/* 名单部分 (带号码和位置) */}
               <div className="space-y-10 pb-10">
-                <h4 className="text-[12px] font-black text-zinc-500 uppercase tracking-widest border-l-4 border-red-600 pl-4 text-white">Active 2025-26 Season Roster</h4>
+                <h4 className="text-[12px] font-black text-zinc-500 uppercase tracking-widest border-l-4 border-red-600 pl-4 text-white font-black italic">Active 2025-26 Season Roster</h4>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                   {(DETAILED_ROSTERS[selectedTeam.abbreviation] || []).map((p, i) => (
                     <div key={i} className="bg-[#1a1d23] p-6 rounded-2xl border border-zinc-800 hover:border-blue-500 transition-all flex items-center justify-between group shadow-xl">
                        <div className="flex items-center gap-5">
-                          <span className="font-mono text-zinc-700 text-lg font-bold group-hover:text-blue-500 transition-colors italic">#{p.no}</span>
-                          <p className="text-white font-black uppercase text-sm tracking-tighter transition-colors italic group-hover:text-white/90">{p.name}</p>
+                          <span className="font-mono text-zinc-700 text-lg font-bold group-hover:text-blue-500 transition-colors italic font-black italic">#{p.no}</span>
+                          <p className="text-white font-black uppercase text-sm tracking-tighter transition-colors italic group-hover:text-white/90 font-black italic">{p.name}</p>
                        </div>
                        <span className="bg-zinc-800 text-zinc-500 text-[10px] px-3 py-1 rounded-full font-black group-hover:bg-blue-600 group-hover:text-white transition-all">{p.pos}</span>
                     </div>
