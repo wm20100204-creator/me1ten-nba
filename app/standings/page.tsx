@@ -318,15 +318,43 @@ const DETAILED_ROSTERS: Record<string, any[]> = {
 };
 
 // 2. 球队荣誉库 (根据 2026 世界线校对)
+// 30 支球队全量准确荣誉库 (截止 2026 年 6 月)
 const TEAM_LEGACY: Record<string, any> = {
-  "NYK": { championships: 3, bio: "【2026冠军】纽约尼克斯在布伦森(FMVP)的率领下开启三冠王时代，麦迪逊花园已成为篮球新圣地。" },
-  "WAS": { championships: 1, bio: "2026 年迎来安东尼·戴维斯加盟，并拥有状元 Cooper Flagg，奇才队已经成为全联盟战绩最出色的球队之一。" },
-  "LAL": { championships: 17, bio: "尽管失去了浓眉，但湖人队通过运作得到了卢卡·东契奇，詹东组合成为全联盟最具统治力的双人组。" },
-  "GSW": { championships: 7, bio: "通过吉米·巴特勒的铁血加盟，金州勇士在 2026 年重新构建了争冠拼图，库里正追逐生涯第五冠。" },
-  "MIA": { championships: 3, bio: "热火队在 2026 年转入新阶段，安德鲁·维金斯的加入为球队注入了顶级的锋线防守能力。" },
-  "BOS": { championships: 18, bio: "作为 2024 年冠军，凯尔特人 18 冠傲视群雄，在 2026 年依然保持着极高的稳定性。" },
-  "SAS": { championships: 5, bio: "文班亚马携手 Ace Bailey，马刺正处于通往下一个辉煌时代的高速轨道上。" },
-  "DEFAULT": { championships: 0, bio: "NBA 2025-26 赛季成员球队，致力于追逐奥布莱恩杯。" }
+  // 东部 Eastern
+  "BOS": { championships: 18, bio: "凯尔特人是 NBA 历史夺冠王，2024年夺取第18冠，绿军王朝底蕴深厚。" },
+  "CHI": { championships: 6, bio: "公牛队代表了乔丹时代的无上光荣，是 90 年代全球篮球的统治者。" },
+  "PHI": { championships: 3, bio: "76人队历史底蕴深厚，从张伯伦到恩比德，始终是东部的核心竞争者。" },
+  "DET": { championships: 3, bio: "底特律活塞是蓝领篮球的巅峰，曾以强悍防守打破了巨星对冠军的垄断。" },
+  "MIA": { championships: 3, bio: "热火队在失去巴特勒后，由阿德巴约和维金斯领衔，继续贯彻铁血文化。" },
+  "NYK": { championships: 3, bio: "【2026总冠军】尼克斯在布伦森(FMVP)的率领下开启三冠王朝，麦迪逊花园重回巅峰。" },
+  "MIL": { championships: 2, bio: "密尔沃基雄鹿在字母哥的带领下保持着顶级的竞争力和内线统治力。" },
+  "CLE": { championships: 1, bio: "2016 年詹姆斯带领骑士完成了总决赛史诗级的 1-3 逆转夺冠，改写了城市命运。" },
+  "ATL": { championships: 1, bio: "老鹰队始终保持着极高的进攻节奏，是一支充满活力的南方劲旅。" },
+  "WAS": { championships: 1, bio: "在得到安东尼·戴维斯并选中状元库珀·弗拉格后，奇才已成为全联盟最恐怖的争冠大热。" },
+  "TOR": { championships: 1, bio: "作为唯一加拿大球队，猛龙在 2019 年书写了北境夺冠奇迹。" },
+  "IND": { championships: 0, bio: "步行者代表了最纯粹的篮球热爱，打法极其无私且充满韧性。" },
+  "ORL": { championships: 0, bio: "魔术队正迅速成长为东部新贵，防守体系和天赋上限令人期待。" },
+  "BKN": { championships: 0, bio: "布鲁克林篮网致力于打造最前卫的都市篮球品牌。" },
+  "CHA": { championships: 0, bio: "黄蜂队致力于打造全新的竞争身份，正处于新一代领袖的磨合期。" },
+
+  // 西部 Western
+  "LAL": { championships: 17, bio: "湖人队通过交易得到东契奇，詹东组合成为 2026 年全联盟最具统治力的双人组。" },
+  "GSW": { championships: 7, bio: "吉米·巴特勒加盟辅助库里，勇士重新找回防守基因，开启最后的夺冠窗口。" },
+  "SAS": { championships: 5, bio: "在克里斯·保罗功成身退后，文班亚马正携手 Ace Bailey 开启马刺新王朝。" },
+  "HOU": { championships: 2, bio: "休斯顿火箭曾创造奥拉朱旺时代的连冠辉煌，目前正致力于航天城的重建。" },
+  "DAL": { championships: 1, bio: "独行侠由欧文和克莱领衔，在东契奇离队后依然保持着极强的季后赛竞争性。" },
+  "OKC": { championships: 1, bio: "雷霆队拥有极其恐怖的天赋储备，是西部未来几年的统治级竞争者。" },
+  "DEN": { championships: 1, bio: "丹佛掘金拥有约基奇，以无私的传导球和高效进攻体系夺取了 2023 年总冠军。" },
+  "POR": { championships: 1, bio: "开拓者在“撕裂之城”拥有最狂热的主场，坚韧与忠诚是这支球队的标签。" },
+  "SAC": { championships: 1, bio: "国王队正通过华丽的进攻和极速的节奏重新找回 21 世纪初期的强队感觉。" },
+  "PHX": { championships: 0, bio: "太阳队拥有杜兰特等顶级得分手，是全联盟进攻火力最猛的球队之一。" },
+  "LAC": { championships: 0, bio: "快船队正在新球馆开启新纪元，致力于打破洛杉矶的旧格局。" },
+  "MIN": { championships: 0, bio: "森林狼由爱德华兹率领，正处于队史最具统治力和希望的阶段。" },
+  "NOP": { championships: 0, bio: "鹈鹕队坐拥新奥尔良，是一支充满天赋和运动能力的青年军。" },
+  "UTA": { championships: 0, bio: "犹他爵士以严明的执行力和坚固的高原主场优势闻名西部。" },
+  "MEM": { championships: 0, bio: "灰熊队球风强硬，是一支充满斗志的“磨砺之城”队伍。" },
+  
+  "DEFAULT": { championships: 0, bio: "NBA 2025-26 赛季活跃成员球队。" }
 };
 
 const fixTeamAbbr = (abbr: string) => {
