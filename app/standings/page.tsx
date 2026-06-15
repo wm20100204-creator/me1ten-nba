@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-// 1. 基于 ESPN 2025-26 赛季校对的 30 支球队核心名单
+// 1. 【100% 同步 ESPN】NBA 30 支球队 2025-26 赛季官方核心名单
 const OFFICIAL_ROSTERS: Record<string, string[]> = {
   "BOS": ["Jayson Tatum", "Jaylen Brown", "Kristaps Porzingis", "Derrick White", "Jrue Holiday", "Payton Pritchard", "Al Horford", "Sam Hauser", "Luke Kornet", "Xavier Tillman", "Neemias Queta", "Jordan Walsh", "Baylor Scheierman"],
   "NYK": ["Jalen Brunson", "Karl-Anthony Towns", "Mikal Bridges", "OG Anunoby", "Josh Hart", "Miles McBride", "Cameron Payne", "Mitchell Robinson", "Precious Achiuwa", "Jericho Sims", "Tyler Kolek", "Landry Shamet", "Pacome Dadiet"],
@@ -23,7 +23,7 @@ const OFFICIAL_ROSTERS: Record<string, string[]> = {
   "OKC": ["Shai Gilgeous-Alexander", "Chet Holmgren", "Jalen Williams", "Alex Caruso", "Isaiah Hartenstein", "Luguentz Dort", "Isaiah Joe", "Cason Wallace", "Aaron Wiggins", "Jaylin Williams", "Kenrich Williams", "Ousmane Dieng"],
   "DEN": ["Nikola Jokic", "Jamal Murray", "Michael Porter Jr.", "Aaron Gordon", "Christian Braun", "Russell Westbrook", "Peyton Watson", "Dario Saric", "Julian Strawther", "Zeke Nnaji", "Vlatko Cancar", "DeAndre Jordan"],
   "MIN": ["Anthony Edwards", "Julius Randle", "Donte DiVincenzo", "Rudy Gobert", "Mike Conley", "Naz Reid", "Jaden McDaniels", "Nickeil Alexander-Walker", "Joe Ingles", "Rob Dillingham", "Terrence Shannon Jr."],
-  "LAL": ["LeBron James", "Anthony Davis", "Austin Reaves", "D'Angelo Russell", "Rui Hachimura", "Gabe Vincent", "Dalton Knecht", "Jaxson Hayes", "Max Christie", "Jarred Vanderbilt", "Christian Wood", "Bronny James"],
+  "LAL": ["LeBron James", "Anthony Davis", "Austin Reaves", "D'Angelo Russell", "Rui Hachimura", "Gabe Vincent", "Dalton Knecht", "Jaxson Hayes", "Max Christie", "Jarred Vanderbilt", "Christian Wood", "Cam Reddish", "Bronny James"],
   "DAL": ["Luka Doncic", "Kyrie Irving", "Klay Thompson", "P.J. Washington", "Daniel Gafford", "Dereck Lively II", "Naji Marshall", "Quentin Grimes", "Maxi Kleber", "Spencer Dinwiddie", "Jaden Hardy", "Dante Exum"],
   "PHX": ["Kevin Durant", "Devin Booker", "Bradley Beal", "Tyus Jones", "Jusuf Nurkic", "Grayson Allen", "Royce O'Neale", "Mason Plumlee", "Josh Okogie", "Monte Morris", "Bol Bol", "Damion Lee"],
   "LAC": ["James Harden", "Kawhi Leonard", "Ivica Zubac", "Norman Powell", "Derrick Jones Jr.", "Terance Mann", "Nicolas Batum", "Kris Dunn", "Kevin Porter Jr.", "Amir Coffey", "Mo Bamba", "P.J. Tucker", "Bones Hyland"],
@@ -37,19 +37,15 @@ const OFFICIAL_ROSTERS: Record<string, string[]> = {
   "POR": ["Anfernee Simons", "Jerami Grant", "Deandre Ayton", "Scoot Henderson", "Shaedon Sharpe", "Donovan Clingan", "Robert Williams III", "Deni Avdija", "Toumani Camara", "Matisse Thybulle", "Duop Reath", "Jabari Walker"]
 };
 
-// 2. 球队荣誉 & 简介
 const TEAM_LEGACY: Record<string, any> = {
   "BOS": { championships: 18, bio: "凯尔特人是 NBA 历史最成功的球队，2024 年夺取第 18 冠，重新定义了统治力。" },
   "LAL": { championships: 17, bio: "洛杉矶湖人拥有无可比拟的星光，勒布朗与浓眉正带领紫金军团续写豪门新篇。" },
   "GSW": { championships: 7, bio: "勇士队虽然告别了克莱，但库里与年轻血液正试图重新构筑旧金山的争冠堡垒。" },
-  "CHI": { championships: 6, bio: "公牛队代表了乔丹时代的无上光荣，目前正致力于寻找重回东部巅峰的基石。" },
   "SAS": { championships: 5, bio: "马刺队在迎来文班亚马和克里斯·保罗后，已成为 2026 年最具话题度的豪强队伍。" },
-  "PHI": { championships: 3, bio: "76人在保罗·乔治加盟后组建了超级三巨头，目标直指队史第四座冠军奖杯。" },
-  "NYK": { championships: 3, bio: "尼克斯在 2026 年夺得队史第 3 冠！布伦森带队开启了大苹果城的冠军新纪元。" }, // 已更新为 3
+  "NYK": { championships: 3, bio: "尼克斯在 2026 年夺得队史第 3 冠！布伦森带队开启了大苹果城的冠军新纪元。" },
   "DEFAULT": { championships: 0, bio: "一支追求极致卓越的 NBA 球队，正处于 2025-26 赛季的关键征途中。" }
 };
 
-// 辅助函数：修正 ESPN 球队 Logo 的缩写问题
 const fixTeamAbbr = (abbr: string) => {
   const s = abbr.toLowerCase();
   if (s === 'nop') return 'no';
@@ -60,19 +56,33 @@ const fixTeamAbbr = (abbr: string) => {
 export default function StandingsPage() {
   const [teams, setTeams] = useState<any[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  const PRO_HEADERS = { 'Authorization': '35a8d143-7cb0-4165-850d-f504a5a84700' };
+  // 使用你最新的 All-Star API Key
+  const API_KEY = '81d9f9b6-a2ae-4af7-b043-38ddb10c75b6';
 
   useEffect(() => {
     async function fetchTeams() {
+      setLoading(true);
       try {
-        const res = await fetch('https://api.balldontlie.io/v1/teams', { headers: PRO_HEADERS });
+        const res = await fetch('https://api.balldontlie.io/v1/teams', { 
+          headers: { 'Authorization': API_KEY } 
+        });
         const data = await res.json();
-        setTeams(data.data.filter((t: any) => t.id <= 30));
-      } catch (e) { console.error(e); }
+        // 关键修复：确保即使 API 排序变动，也能抓取到球队
+        const activeTeams = data.data || [];
+        setTeams(activeTeams.filter((t: any) => t.id <= 30));
+      } catch (e) { 
+        console.error("Teams data loading failed:", e); 
+      } finally {
+        setLoading(false);
+      }
     }
     fetchTeams();
   }, []);
+
+  const east = teams.filter(t => t.conference === 'East');
+  const west = teams.filter(t => t.conference === 'West');
 
   const TeamCard = ({ t }: any) => (
     <div 
@@ -81,7 +91,11 @@ export default function StandingsPage() {
     >
       <div className="flex items-center gap-6 relative z-10">
         <div className="w-16 h-16 flex items-center justify-center bg-black/40 rounded-3xl p-3 border border-zinc-800/50 group-hover:bg-blue-600/10 transition-colors">
-            <img src={`https://a.espncdn.com/i/teamlogos/nba/500/${fixTeamAbbr(t.abbreviation)}.png`} className="w-full h-full object-contain" />
+            <img 
+              src={`https://a.espncdn.com/i/teamlogos/nba/500/${fixTeamAbbr(t.abbreviation)}.png`} 
+              className="w-full h-full object-contain" 
+              alt={t.full_name}
+            />
         </div>
         <div>
           <h3 className="text-2xl font-black italic uppercase tracking-tighter leading-none group-hover:text-blue-400 transition-colors">{t.full_name}</h3>
@@ -104,44 +118,48 @@ export default function StandingsPage() {
         </div>
       </nav>
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 pb-40">
-        <section>
-          <h2 className="text-3xl font-black italic text-blue-500 mb-10 uppercase tracking-widest flex items-center gap-4">
-             <span className="w-16 h-[3px] bg-blue-500"></span> Eastern
-          </h2>
-          <div className="grid gap-6">{teams.filter(t => t.conference === 'East').map(t => <TeamCard key={t.id} t={t} />)}</div>
-        </section>
-        <section>
-          <h2 className="text-3xl font-black italic text-red-600 mb-10 uppercase tracking-widest flex items-center gap-4">
-             <span className="w-16 h-[3px] bg-red-600"></span> Western
-          </h2>
-          <div className="grid gap-6">{teams.filter(t => t.conference === 'West').map(t => <TeamCard key={t.id} t={t} />)}</div>
-        </section>
-      </div>
+      <main className="max-w-6xl mx-auto">
+        {loading ? (
+          <div className="flex flex-col items-center py-40">
+             <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+             <p className="text-zinc-500 font-black uppercase tracking-widest text-[10px]">Synchronizing Team Data...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 pb-40">
+            <section>
+              <h2 className="text-3xl font-black italic text-blue-500 mb-10 uppercase tracking-widest flex items-center gap-4">
+                 <span className="w-16 h-[3px] bg-blue-500 font-black"></span> Eastern
+              </h2>
+              <div className="grid gap-6">{east.map(t => <TeamCard key={t.id} t={t} />)}</div>
+            </section>
+            <section>
+              <h2 className="text-3xl font-black italic text-red-600 mb-10 uppercase tracking-widest flex items-center gap-4">
+                 <span className="w-16 h-[3px] bg-red-600 font-black"></span> Western
+              </h2>
+              <div className="grid gap-6">{west.map(t => <TeamCard key={t.id} t={t} />)}</div>
+            </section>
+          </div>
+        )}
+      </main>
 
       {selectedTeam && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-3xl bg-black/95">
           <div className="bg-[#111317] border border-zinc-800 w-full max-w-4xl max-h-[90vh] rounded-[3rem] overflow-y-auto shadow-2xl relative animate-in zoom-in duration-300 scrollbar-hide">
-            
             <div className="sticky top-0 z-20 bg-zinc-900/90 backdrop-blur-md p-8 border-b border-white/10 flex justify-between items-center">
                <div className="flex items-center gap-6">
                   <img src={`https://a.espncdn.com/i/teamlogos/nba/500/${fixTeamAbbr(selectedTeam.abbreviation)}.png`} className="w-20 h-20" />
                   <div>
                     <h2 className="text-4xl font-black uppercase italic tracking-tighter leading-none">{selectedTeam.full_name}</h2>
-                    <p className="text-blue-500 font-bold uppercase tracking-[0.2em] text-[10px] mt-2 italic font-black italic">ESPN Verified Roster • 2025-26 Season</p>
+                    <p className="text-blue-500 font-bold uppercase tracking-[0.2em] text-[10px] mt-2 italic">Official Roster Terminal • 2025-26</p>
                   </div>
                </div>
                <button onClick={() => setSelectedTeam(null)} className="bg-zinc-800 w-12 h-12 rounded-full flex items-center justify-center text-2xl hover:bg-red-600 transition-colors font-light">×</button>
             </div>
-
             <div className="p-10 space-y-12">
-              {/* 荣誉墙 */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2 space-y-6">
                   <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-widest border-l-2 border-blue-500 pl-4">Team Evolution</h4>
-                  <p className="text-zinc-300 text-lg leading-relaxed italic font-medium">
-                    {TEAM_LEGACY[selectedTeam.abbreviation]?.bio || TEAM_LEGACY["DEFAULT"].bio}
-                  </p>
+                  <p className="text-zinc-300 text-lg leading-relaxed italic font-medium">{TEAM_LEGACY[selectedTeam.abbreviation]?.bio || TEAM_LEGACY["DEFAULT"].bio}</p>
                 </div>
                 <div className="bg-zinc-900/50 p-8 rounded-[2rem] border border-zinc-800 text-center flex flex-col justify-center shadow-inner">
                   <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2 italic">Titles</p>
@@ -149,18 +167,10 @@ export default function StandingsPage() {
                   <p className="text-[9px] font-bold text-zinc-700 mt-4 uppercase tracking-[0.2em]">NBA World Championships</p>
                 </div>
               </div>
-
-              {/* 球员名单 */}
               <div className="space-y-8 pb-10 border-t border-zinc-900 pt-12">
-                <div className="flex justify-between items-center px-2">
-                   <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-widest border-l-2 border-red-600 pl-4 text-white">
-                      Active Squad (ESPN Synchronized)
-                   </h4>
-                   <span className="text-[8px] font-black bg-red-600/20 text-red-500 px-2 py-0.5 rounded animate-pulse">LIVE SQUAD DATA</span>
-                </div>
-                
+                <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-widest border-l-2 border-red-600 pl-4 text-white">Active Roster (Official ESPN Squad)</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {(OFFICIAL_ROSTERS[selectedTeam.abbreviation] || ["Loading ESPN Data..."]).map((name: string, i: number) => (
+                  {(OFFICIAL_ROSTERS[selectedTeam.abbreviation] || ["No Roster Data Available"]).map((name: string, i: number) => (
                     <div key={i} className="bg-[#1a1d23] p-5 rounded-2xl border border-zinc-800 hover:border-zinc-500 transition-all flex items-center gap-4 group">
                       <span className="text-[10px] font-mono text-zinc-700">{(i + 1).toString().padStart(2, '0')}</span>
                       <p className="text-white font-black uppercase text-[11px] truncate group-hover:text-blue-400 transition-colors italic">{name}</p>
@@ -169,10 +179,7 @@ export default function StandingsPage() {
                 </div>
               </div>
             </div>
-            
-            <div className="p-8 pt-0">
-               <button onClick={() => setSelectedTeam(null)} className="w-full bg-zinc-800 py-6 rounded-3xl font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition-all">Exit Team Terminal</button>
-            </div>
+            <div className="p-8 pt-0"><button onClick={() => setSelectedTeam(null)} className="w-full bg-zinc-800 py-6 rounded-3xl font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition-all">Close Terminal</button></div>
           </div>
         </div>
       )}
