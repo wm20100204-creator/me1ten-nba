@@ -10,7 +10,7 @@ async function getNBAGames() {
 
   try {
     const res = await fetch(`https://api.balldontlie.io/v1/games?dates[]=${today}`, {
-      headers: { 'Authorization': '35a8d143-7cb0-4165-850d-f504a5a84700' },
+      headers: { 'Authorization': '81d9f9b6-a2ae-4af7-b043-38ddb10c75b6' },
       next: { revalidate: 30 }
     });
     const data = await res.json();
@@ -25,7 +25,6 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-[#0b0e11] text-white p-6 md:p-12 font-sans overflow-hidden relative">
-      {/* 顶部导航 */}
       <nav className="max-w-7xl mx-auto flex justify-between items-center mb-12 border-b border-zinc-800 pb-8 relative z-10">
         <Link href="/"><h1 className="text-3xl font-black italic tracking-tighter uppercase text-white">Me1ten<span className="text-blue-500">.Stats</span></h1></Link>
         <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-zinc-500">
@@ -45,12 +44,12 @@ export default async function Home() {
           <div className="relative bg-gradient-to-r from-blue-700 via-blue-600 to-orange-600 p-1 rounded-[3rem] shadow-[0_0_50px_rgba(37,99,235,0.3)]">
             <div className="bg-[#0b0e11]/90 rounded-[2.9rem] p-12 flex flex-col md:flex-row items-center justify-between overflow-hidden relative text-center md:text-left">
               <div className="relative z-10">
-                <span className="bg-white text-blue-700 text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-[0.3em] mb-6 inline-block">2026 NBA Champions</span>
+                <span className="bg-white text-blue-700 text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-[0.3em] mb-6 inline-block shadow-lg">2026 NBA Champions</span>
                 <h2 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter leading-none mb-4">
                   NEW YORK <br/> <span className="text-orange-500">KNICKS</span>
                 </h2>
                 <p className="text-2xl md:text-4xl font-black italic uppercase text-white tracking-tight">
-                  🏆 JALEN BRUNSON <span className="text-orange-500 underline decoration-4 underline-offset-8 ml-2">FMVP</span>
+                  🏆 JALEN BRUNSON <span className="text-orange-500 underline decoration-4 underline-offset-8 ml-2">FINALS MVP</span>
                 </p>
               </div>
               <img src="https://a.espncdn.com/i/teamlogos/nba/500/nyk.png" className="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-[0_0_30px_rgba(249,115,22,0.5)] mt-10 md:mt-0" />
@@ -59,48 +58,39 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* --- 3 列导航卡片 --- */}
+        {/* 3 列导航 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20 font-black italic">
           <Link href="/playoffs" className="group bg-[#16191d] border border-zinc-800 p-8 rounded-[2.5rem] hover:border-blue-500 transition-all shadow-xl relative overflow-hidden">
             <h3 className="text-2xl uppercase group-hover:text-blue-400">冠军对阵图 →</h3>
-            <p className="text-zinc-600 text-[10px] uppercase mt-2 font-bold tracking-widest italic">Bracket Terminal</p>
-            <div className="absolute -bottom-4 -right-4 text-6xl opacity-[0.03] uppercase">Playoff</div>
+            <p className="text-zinc-600 text-[10px] uppercase mt-2 font-bold tracking-widest italic text-white/50">2026 Playoff Final</p>
           </Link>
-
           <Link href="/leaders" className="group bg-[#16191d] border border-orange-500/30 p-8 rounded-[2.5rem] hover:border-orange-500 transition-all shadow-xl relative overflow-hidden">
             <h3 className="text-2xl uppercase text-orange-500 group-hover:text-orange-400">数据领袖榜 →</h3>
-            <p className="text-zinc-600 text-[10px] uppercase mt-2 font-bold tracking-widest italic">League Leaders</p>
-            <div className="absolute -bottom-4 -right-4 text-6xl opacity-[0.03] uppercase text-orange-500">Stats</div>
+            <p className="text-zinc-600 text-[10px] uppercase mt-2 font-bold tracking-widest italic text-orange-500/50">League Statistics</p>
           </Link>
-
           <Link href="/standings" className="group bg-[#16191d] border border-zinc-800 p-8 rounded-[2.5rem] hover:border-zinc-300 transition-all shadow-xl relative overflow-hidden">
             <h3 className="text-2xl uppercase group-hover:text-white">球队资料库 →</h3>
-            <p className="text-zinc-600 text-[10px] uppercase mt-2 font-bold tracking-widest italic">Teams Dossier</p>
-            <div className="absolute -bottom-4 -right-4 text-6xl opacity-[0.03] uppercase">NBA</div>
+            <p className="text-zinc-600 text-[10px] uppercase mt-2 font-bold tracking-widest italic text-white/50">Teams Database</p>
           </Link>
         </div>
 
-        <h2 className="text-xl font-black italic uppercase mb-10 border-l-4 border-blue-600 pl-6 text-zinc-400">NBA Activity Feed</h2>
-        
-        {/* 比分列表 */}
+        <h2 className="text-xl font-black italic uppercase mb-10 border-l-4 border-blue-600 pl-6 text-zinc-400">Live Activity Feed</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-40">
           {games.length > 0 ? games.map((game: any) => (
             <div key={game.id} className="bg-[#16191d] border border-zinc-800 p-8 rounded-[2.5rem] shadow-2xl hover:border-blue-500 transition-all group">
-              <div className="text-[9px] font-black text-zinc-500 mb-8 uppercase tracking-[0.3em] text-center border-b border-zinc-900 pb-4 group-hover:text-blue-400">
-                {game.status}
-              </div>
+              <div className="text-[9px] font-black text-zinc-500 mb-8 uppercase tracking-[0.3em] text-center border-b border-zinc-900 pb-4 group-hover:text-blue-400">{game.status}</div>
               <div className="space-y-8">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-4">
-                    <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${game.home_team.abbreviation.toLowerCase()}.png`} className="w-12 h-12 object-contain" />
-                    <span className="font-black italic text-xl">{game.home_team.abbreviation}</span>
+                    <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${game.home_team.abbreviation.toLowerCase()}.png`} className="w-12 h-12 object-contain" alt="logo" />
+                    <span className="font-black italic text-xl uppercase">{game.home_team.abbreviation}</span>
                   </div>
                   <span className="text-5xl font-black italic">{game.home_team_score}</span>
                 </div>
                 <div className="flex justify-between items-center text-zinc-500">
                   <div className="flex items-center gap-4">
-                    <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${game.visitor_team.abbreviation.toLowerCase()}.png`} className="w-12 h-12 opacity-80" />
-                    <span className="font-black italic text-xl">{game.visitor_team.abbreviation}</span>
+                    <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${game.visitor_team.abbreviation.toLowerCase()}.png`} className="w-12 h-12 opacity-80" alt="logo" />
+                    <span className="font-black italic text-xl uppercase">{game.visitor_team.abbreviation}</span>
                   </div>
                   <span className="text-5xl font-black italic">{game.visitor_team_score}</span>
                 </div>
@@ -108,7 +98,7 @@ export default async function Home() {
             </div>
           )) : (
             <div className="col-span-full py-24 text-center border-2 border-dashed border-zinc-900 rounded-[4rem]">
-              <p className="text-zinc-600 font-black uppercase text-sm italic tracking-widest">NYK Champions: Off-Season Mode</p>
+              <p className="text-zinc-600 font-black uppercase text-sm italic tracking-widest">Post-Season Terminal: NYK Champions</p>
             </div>
           )}
         </div>
