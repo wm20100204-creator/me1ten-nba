@@ -291,32 +291,49 @@ const DETAILED_ROSTERS: Record<string, any[]> = {
     { no: "23", name: "Tyrese Martin", pos: "SG" }
   ],
   "LAC": [
-    { no: "01", name: "James Harden", pos: "PG" }, { no: "02", name: "Kawhi Leonard", pos: "SF" },
-    { no: "40", name: "Ivica Zubac", pos: "C" }, { no: "24", name: "Norman Powell", pos: "SG" },
-    { no: "05", name: "Derrick Jones Jr.", pos: "SF" }, { no: "14", name: "Terance Mann", pos: "SG" },
-    { no: "33", name: "Nicolas Batum", pos: "PF" }, { no: "08", name: "Kris Dunn", pos: "PG" },
-    { no: "07", name: "Kevin Porter Jr.", pos: "PG" }
+    { no: "8", name: "Kris Dunn", pos: "PG" }, { no: "11", name: "Brook Lopez", pos: "C" },
+    { no: "33", name: "Nicolas Batum", pos: "PF" }, { no: "20", name: "John Collins", pos: "PF" },
+    { no: "4", name: "Kobe Sanders", pos: "SG" }, { no: "2", name: "Kawhi Leonard", pos: "SF" },
+    { no: "22", name: "Jordan Miller", pos: "SF" }, { no: "12", name: "Cam Christie", pos: "SG" },
+    { no: "5", name: "Derrick Jones Jr.", pos: "SF" }, { no: "14", name: "Yanic Konan Niederhäuser", pos: "C" },
+    { no: "9", name: "Bennedict Mathurin", pos: "SF" }, { no: "7, 10", name: "Bogdan Bogdanović", pos: "SG" },
+    { no: "10", name: "Darius Garland", pos: "PG" }, { no: "23", name: "Isaiah Jackson", pos: "C" },
+    { no: "15", name: "TyTy Washington Jr.", pos: "PG" }, { no: "50", name: "Sean Pedulla", pos: "PG" },
+    { no: "0", name: "Bradley Beal", pos: "SG" }, { no: "55", name: "Norchad Omier", pos: "PF" }
   ],
   "CHI": [
-    { no: "08", name: "Zach LaVine", pos: "SG" }, { no: "03", name: "Josh Giddey", pos: "PG" },
-    { no: "03", name: "Coby White", pos: "SG" }, { no: "04", name: "Nikola Vučević", pos: "C" },
-    { no: "44", name: "Patrick Williams", pos: "PF" }, { no: "14", name: "Matas Buzelis", pos: "PF" },
-    { no: "02", name: "Lonzo Ball", pos: "PG" }
+    { no: "14", name: "Matas Buzelis", pos: "PF" }, { no: "44", name: "Patrick Williams", pos: "PF" },
+    { no: "30", name: "Tre Jones", pos: "PG" }, { no: "35", name: "Isaac Okoro", pos: "SG" },
+    { no: "3", name: "Josh Giddey", pos: "PG" }, { no: "25", name: "Jalen Smith", pos: "C" },
+    { no: "47", name: "Lachlan Olbrich", pos: "C" }, { no: "7", name: "Rob Dillingham", pos: "PG" },
+    { no: "11", name: "Leonard Miller", pos: "SF" }, { no: "2", name: "Collin Sexton", pos: "SG" },
+    { no: "28", name: "Guerschon Yabusele", pos: "C" }, { no: "13", name: "Nick Richards", pos: "C" },
+    { no: "8", name: "Yuki Kawamura", pos: "PG" }, { no: "12", name: "Zach Collins", pos: "C" },
+    { no: "5", name: "Mac McClung", pos: "SG" }, { no: "2, 22", name: "Anfernee Simons", pos: "SG" },
+    { no: "16", name: "Mouhamadou Gueye", pos: "PF" }, { no: "24", name: "Noa Essengue", pos: "PF" }
   ],
   "ATL": [
-    { no: "11", name: "Trae Young", pos: "PG" }, { no: "10", name: "Zaccharie Risacher", pos: "SF" },
-    { no: "01", name: "Jalen Johnson", pos: "PF" }, { no: "15", name: "Clint Capela", pos: "C" },
-    { no: "08", name: "Bogdan Bogdanović", pos: "SG" }, { no: "05", name: "Dyson Daniels", pos: "SG" },
-    { no: "17", name: "Onyeka Okongwu", pos: "C" }, { no: "07", name: "De'Andre Hunter", pos: "SF" }
+    { no: "7", name: "Nickeil Alexander-Walker", pos: "SG" }, { no: "18", name: "Mouhamed Gueye", pos: "PF" },
+    { no: "5", name: "Dyson Daniels", pos: "SG" }, { no: "17", name: "Onyeka Okongwu", pos: "C" },
+    { no: "1", name: "Jalen Johnson", pos: "PF" }, { no: "10", name: "Zaccharie Risacher", pos: "SF" },
+    { no: "2", name: "Keaton Wallace", pos: "PG" }, { no: "14", name: "Asa Newell", pos: "PF" },
+    { no: "3", name: "CJ McCollum", pos: "PG" }, { no: "24", name: "Corey Kispert", pos: "SF" },
+    { no: "4", name: "Gabe Vincent", pos: "PG" }, { no: "31", name: "Jock Landale", pos: "C" },
+    { no: "0", name: "Jonathan Kuminga", pos: "PF" }, { no: "35", name: "Christian Koloko", pos: "C" },
+    { no: "8", name: "Buddy Hield", pos: "SG" }, { no: "13", name: "Tony Bradley", pos: "C" },
+    { no: "00, 0", name: "RayJ Dennis", pos: "PG" }, { no: "51", name: "Keshon Gilbert", pos: "SG" }
   ],
   "TOR": [
-    { no: "04", name: "Scottie Barnes", pos: "PF" }, { no: "09", name: "RJ Barrett", pos: "SF" },
-    { no: "05", name: "Immanuel Quickley", pos: "PG" }, { no: "19", name: "Jakob Poeltl", pos: "C" },
-    { no: "01", name: "Gradey Dick", pos: "SG" }, { no: "45", name: "Davion Mitchell", pos: "PG" },
-    { no: "41", name: "Kelly Olynyk", pos: "PF" }
-  ]
-};
-
+    { no: "23", name: "Jamal Shead", pos: "PG" }, { no: "4", name: "Scottie Barnes", pos: "PF" },
+    { no: "54", name: "Sandro Mamukelashvili", pos: "C" }, { no: "3", name: "Brandon Ingram", pos: "SF" },
+    { no: "1", name: "Gradey Dick", pos: "SG" }, { no: "14", name: "Ja'Kobe Walter", pos: "SG" },
+    { no: "5", name: "Immanuel Quickley", pos: "PG" }, { no: "77", name: "Jamison Battle", pos: "SF" },
+    { no: "9", name: "RJ Barrett", pos: "SF" }, { no: "12", name: "Collin Murray-Boyles", pos: "PF" },
+    { no: "19", name: "Jakob Poeltl", pos: "C" }, { no: "2", name: "Jonathan Mogbo", pos: "PF" },
+    { no: "0", name: "A.J. Lawson", pos: "SG" }, { no: "55", name: "Alijah Martin", pos: "SG" },
+    { no: "17", name: "Garrett Temple", pos: "SG" }, { no: "32", name: "Trayce Jackson-Davis", pos: "C" },
+    { no: "24", name: "Chucky Hepburn", pos: "PG" }
+  ],
 // 2. 球队荣誉库 (根据 2026 世界线校对)
 // 30 支球队全量准确荣誉库 (截止 2026 年 6 月)
 const TEAM_LEGACY: Record<string, any> = {
