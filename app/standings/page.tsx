@@ -333,7 +333,8 @@ const DETAILED_ROSTERS: Record<string, any[]> = {
     { no: "0", name: "A.J. Lawson", pos: "SG" }, { no: "55", name: "Alijah Martin", pos: "SG" },
     { no: "17", name: "Garrett Temple", pos: "SG" }, { no: "32", name: "Trayce Jackson-Davis", pos: "C" },
     { no: "24", name: "Chucky Hepburn", pos: "PG" }
-  ],
+  ]
+}
 // 2. 球队荣誉库 (根据 2026 世界线校对)
 // 30 支球队全量准确荣誉库 (截止 2026 年 6 月)
 const TEAM_LEGACY: Record<string, any> = {
