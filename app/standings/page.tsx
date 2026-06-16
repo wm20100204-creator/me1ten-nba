@@ -147,7 +147,7 @@ const DETAILED_ROSTERS: Record<string, any[]> = {
     { no: "33", name: "Olivier Sarr", pos: "C" }
   ],
   "MIL": [
-    { no: "34", name: "Giannis Antetokounmpo", pos: "PF" }, { no: "00", name: "Damian Lillard", pos: "PG" },
+    { no: "34", name: "Giannis Antetokounmpo", pos: "PF" },
     { no: "03", name: "Myles Turner", pos: "C" }, { no: "18", name: "Kyle Kuzma", pos: "PF" },
     { no: "09", name: "Bobby Portis", pos: "PF" }, { no: "20", name: "A.J. Green", pos: "SG" },
     { no: "13", name: "Ryan Rollins", pos: "PG" }, { no: "00", name: "Jericho Sims", pos: "C" },
