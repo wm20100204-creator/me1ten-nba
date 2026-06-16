@@ -6,7 +6,7 @@ import Link from 'next/link';
 // 核心缩写转换逻辑：确保图片不碎
 const fixTeam = (abbr: string) => {
   const map: Record<string, string> = {
-    'SA': 'sas', 'NY': 'nyk', 'GS': 'gsw', 'NO': 'no', 'UTAH': 'utah',
+    'SA': 'sas', 'NY': 'nyk', 'GS': 'gsw', 'NO': 'no', 'UTA': 'utah',
     'BRK': 'bkn', 'CHO': 'cha', 'PHX': 'phx', 'OKC': 'okc', 'LAL': 'lal'
   };
   const s = abbr?.toUpperCase();
