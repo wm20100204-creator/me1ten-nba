@@ -13,7 +13,7 @@ const PLAYER_AWARDS: Record<string, { label: string; color: string }> = {
   "Jalen Brunson": { label: "2026 FINALS MVP", color: "bg-orange-500" }
 };
 
-// 2. 超级球星保底数据库 (当 API 无法返回 2026 数据时启用)
+// 2. 超级球星保底数据库
 const STAR_STATS_BACKUP: Record<string, any> = {
   "Shai Gilgeous-Alexander": { pts: 31.1, reb: 5.5, ast: 6.4, stl: 2.1, blk: 0.9, fg_pct: 0.54, fg3_pct: 0.38, games_played: 76 },
   "Victor Wembanyama": { pts: 26.4, reb: 12.8, ast: 4.5, stl: 1.4, blk: 3.9, fg_pct: 0.49, fg3_pct: 0.34, games_played: 74 },
@@ -55,7 +55,6 @@ function PlayerTerminalContent() {
     try {
       const seasons = [2025, 2024, 2023];
       let foundData = null;
-
       for (const season of seasons) {
         const res = await fetch(`https://api.balldontlie.io/v1/season_averages?season=${season}&player_ids[]=${player.id}`, { 
           headers: { 'Authorization': API_KEY } 
@@ -66,13 +65,8 @@ function PlayerTerminalContent() {
           break;
         }
       }
-
-      // 如果 API 没给数据，但这是我们要找的明星球员，使用保底数据
-      if (!foundData && STAR_STATS_BACKUP[fullName]) {
-        setStats(STAR_STATS_BACKUP[fullName]);
-      } else {
-        setStats(foundData);
-      }
+      if (!foundData && STAR_STATS_BACKUP[fullName]) setStats(STAR_STATS_BACKUP[fullName]);
+      else setStats(foundData);
     } catch (e) {
       if (STAR_STATS_BACKUP[fullName]) setStats(STAR_STATS_BACKUP[fullName]);
     }
@@ -102,14 +96,11 @@ function PlayerTerminalContent() {
       if (data.data && data.data.length > 0) {
         setPlayers(data.data);
         if (autoName && data.data.length >= 1) {
-          const p = data.data[0];
-          setSelectedPlayer(p);
-          fetchPlayerStats(p);
+          setSelectedPlayer(data.data[0]);
+          fetchPlayerStats(data.data[0]);
         }
-      } else {
-        setErrorMsg("球员库未检索到该姓名。建议只搜姓氏。");
-      }
-    } catch (e) { setErrorMsg("数据同步失败。"); }
+      } else { setErrorMsg("查无此人。"); }
+    } catch (e) { setErrorMsg("同步失败。"); }
     setLoading(false);
   };
 
@@ -124,31 +115,26 @@ function PlayerTerminalContent() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <div className="flex gap-4 mb-16 px-4 md:px-0">
+      <div className="flex gap-4 mb-12 px-4 md:px-0">
         <input 
           type="text"
-          placeholder="搜索球员 (例如: Shai Gilgeous-Alexander)"
-          className="flex-1 bg-[#16191d] border border-zinc-800 p-6 rounded-[2.5rem] outline-none text-white text-lg focus:border-blue-500 shadow-2xl transition-all"
+          placeholder="搜索球员 (例如: Stephen Curry)"
+          className="flex-1 bg-[#16191d] border border-zinc-800 p-5 rounded-[2.5rem] outline-none text-white text-lg focus:border-blue-500 shadow-2xl transition-all"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && fetchPlayersTerminal(search)}
         />
-        <button onClick={() => fetchPlayersTerminal(search)} className="bg-blue-600 px-12 py-6 rounded-[2rem] font-black uppercase tracking-widest hover:bg-blue-700 shadow-xl transition-all">
-          Search
-        </button>
+        <button onClick={() => fetchPlayersTerminal(search)} className="bg-blue-600 px-10 py-5 rounded-[2rem] font-black uppercase tracking-widest hover:bg-blue-700 transition-all">Search</button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20 px-4 md:px-0">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-20 px-4">
         {players.map((p: any) => {
           const award = PLAYER_AWARDS[`${p.first_name} ${p.last_name}`];
           return (
-            <div key={p.id} onClick={() => { setSelectedPlayer(p); fetchPlayerStats(p); }} className="bg-[#16191d] border border-zinc-800 p-8 rounded-[2.5rem] hover:border-blue-500 transition-all cursor-pointer group shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-4 opacity-10 font-black text-6xl italic">{p.team?.abbreviation}</div>
-              <h3 className="text-3xl font-black italic uppercase group-hover:text-blue-400 leading-none mb-2">{p.first_name} <br/> {p.last_name}</h3>
-              {award && (
-                <span className={`${award.color} text-white text-[8px] font-black px-2 py-0.5 rounded-full mt-1 inline-block italic`}>{award.label}</span>
-              )}
-              <p className="text-zinc-500 font-bold uppercase text-[10px] tracking-widest mt-4">{p.team?.full_name}</p>
+            <div key={p.id} onClick={() => { setSelectedPlayer(p); fetchPlayerStats(p); }} className="bg-[#16191d] border border-zinc-800 p-6 rounded-3xl hover:border-blue-500 transition-all cursor-pointer group relative overflow-hidden">
+              <h3 className="text-2xl font-black italic uppercase leading-none mb-2">{p.first_name} <br/> {p.last_name}</h3>
+              {award && <span className={`${award.color} text-white text-[8px] font-black px-2 py-0.5 rounded-full inline-block italic`}>{award.label}</span>}
+              <p className="text-zinc-600 font-bold uppercase text-[10px] mt-4">{p.team?.full_name}</p>
             </div>
           );
         })}
@@ -156,89 +142,82 @@ function PlayerTerminalContent() {
 
       {selectedPlayer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-3xl bg-black/95">
-          <div className="bg-[#111317] border border-zinc-800 w-full max-w-5xl rounded-[3rem] overflow-hidden shadow-2xl relative animate-in zoom-in duration-300">
-            <div className="bg-blue-600 p-8 md:p-12 flex flex-col md:flex-row items-center gap-10 relative overflow-hidden">
-              <button onClick={() => setSelectedPlayer(null)} className="absolute top-8 right-10 text-white/50 hover:text-white text-4xl font-light z-30">×</button>
-              <div className="w-44 h-44 bg-zinc-900 rounded-full flex-shrink-0 border-4 border-white/20 relative z-10 overflow-hidden shadow-2xl">
-                 <div className="absolute inset-0 flex items-center justify-center text-6xl font-black italic text-white opacity-20">
-                    {selectedPlayer.first_name[0]}{selectedPlayer.last_name[0]}
-                 </div>
-                 {/* 球员头像 - 尝试不同的 ID 映射逻辑 */}
-                 <img 
-                    src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/${selectedPlayer.id + 1000}.png`} 
-                    className="w-full h-full object-cover mt-4 relative z-10" 
-                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                 />
+          {/* 核心修正：max-h-[90vh] 和 overflow-y-auto */}
+          <div className="bg-[#111317] border border-zinc-800 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[2.5rem] shadow-2xl relative scrollbar-hide">
+            
+            {/* 头部：更紧凑 */}
+            <div className="bg-blue-600 p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 relative overflow-hidden border-b border-white/10 sticky top-0 z-30">
+              <button onClick={() => setSelectedPlayer(null)} className="absolute top-4 right-6 text-white/50 hover:text-white text-3xl font-light z-40">×</button>
+              
+              <div className="w-32 h-32 bg-zinc-900 rounded-full flex-shrink-0 border-4 border-white/10 relative z-10 overflow-hidden">
+                 <div className="absolute inset-0 flex items-center justify-center text-4xl font-black italic text-white opacity-20">{selectedPlayer.first_name[0]}{selectedPlayer.last_name[0]}</div>
+                 <img src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/${selectedPlayer.id + 1000}.png`} className="w-full h-full object-cover mt-4 relative z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
               </div>
 
               <div className="text-center md:text-left z-10">
-                <h2 className="text-5xl md:text-7xl font-black uppercase italic tracking-tighter leading-none mb-4 text-white">
-                    {selectedPlayer.first_name} {selectedPlayer.last_name}
-                </h2>
-                <div className="flex flex-wrap justify-center md:justify-start items-center gap-4">
-                   <div className="flex items-center gap-3 bg-black/20 px-5 py-2 rounded-full border border-white/10">
-                      <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${getEspnAbbr(selectedPlayer.team?.abbreviation)}.png`} className="w-8 h-8 object-contain" />
-                      <span className="font-black tracking-widest text-sm uppercase">{selectedPlayer.team?.full_name}</span>
+                <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-none mb-2">{selectedPlayer.first_name} {selectedPlayer.last_name}</h2>
+                <div className="flex flex-wrap justify-center md:justify-start items-center gap-3">
+                   <div className="flex items-center gap-2 bg-black/20 px-4 py-1.5 rounded-full border border-white/10">
+                      <img src={`https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/${getEspnAbbr(selectedPlayer.team?.abbreviation)}.png`} className="w-5 h-5 object-contain" />
+                      <span className="font-bold tracking-widest text-[10px] uppercase">{selectedPlayer.team?.full_name}</span>
                    </div>
-                   {PLAYER_AWARDS[`${selectedPlayer.first_name} ${selectedPlayer.last_name}`] && (
-                     <span className={`${PLAYER_AWARDS[`${selectedPlayer.first_name} ${selectedPlayer.last_name}`].color} text-black px-4 py-2 rounded-full text-[10px] font-black italic shadow-lg animate-pulse`}>
-                       {PLAYER_AWARDS[`${selectedPlayer.first_name} ${selectedPlayer.last_name}`].label}
-                     </span>
-                   )}
+                   {PLAYER_AWARDS[`${selectedPlayer.first_name} ${selectedPlayer.last_name}`] && <span className={`${PLAYER_AWARDS[`${selectedPlayer.first_name} ${selectedPlayer.last_name}`].color} text-black px-3 py-1 rounded-full text-[9px] font-black italic shadow-lg`}>{PLAYER_AWARDS[`${selectedPlayer.first_name} ${selectedPlayer.last_name}`].label}</span>}
                 </div>
               </div>
             </div>
 
-            <div className="p-10 md:p-12 space-y-10">
-              <div className="grid grid-cols-3 gap-6">
-                <div className="bg-zinc-900/50 p-6 rounded-3xl border border-zinc-800 text-center">
-                  <p className="text-zinc-500 text-[10px] font-black uppercase mb-1">Height</p>
-                  <p className="text-3xl font-black text-white italic">{selectedPlayer.height || 'N/A'}</p>
+            <div className="p-6 md:p-10 space-y-6">
+              {/* 身体素质 - 紧凑型 */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800 text-center">
+                  <p className="text-zinc-500 text-[9px] font-black uppercase mb-1">Height</p>
+                  <p className="text-xl font-black italic">{selectedPlayer.height || 'N/A'}</p>
                 </div>
-                <div className="bg-zinc-900/50 p-6 rounded-3xl border border-zinc-800 text-center">
-                  <p className="text-zinc-500 text-[10px] font-black uppercase mb-1">Weight</p>
-                  <p className="text-3xl font-black text-white italic">{selectedPlayer.weight || 'N/A'} lbs</p>
+                <div className="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800 text-center">
+                  <p className="text-zinc-500 text-[9px] font-black uppercase mb-1">Weight</p>
+                  <p className="text-xl font-black italic">{selectedPlayer.weight || 'N/A'} lbs</p>
                 </div>
-                <div className="bg-zinc-900/50 p-6 rounded-3xl border border-zinc-800 text-center">
-                  <p className="text-zinc-500 text-[10px] font-black uppercase mb-1">Jersey</p>
-                  <p className="text-3xl font-black text-blue-500 italic">#{selectedPlayer.jersey_number || '00'}</p>
+                <div className="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800 text-center">
+                  <p className="text-zinc-500 text-[9px] font-black uppercase mb-1">Jersey</p>
+                  <p className="text-xl font-black text-blue-500 italic">#{selectedPlayer.jersey_number || '00'}</p>
                 </div>
               </div>
 
-              {/* 数据区修正 */}
-              <div className="bg-zinc-900/30 border border-zinc-800 rounded-[2.5rem] p-10 shadow-inner text-center">
-                <div className="flex justify-between items-center mb-10 px-2">
-                   <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.4em] italic">Season Performance</h4>
-                   <span className="bg-blue-600/20 text-blue-500 px-3 py-1 rounded-full text-[8px] font-black italic tracking-widest uppercase">Verified Feed</span>
+              {/* 数据区 - 更加扁平 */}
+              <div className="bg-[#16191d] border border-zinc-800 rounded-[2rem] p-6 shadow-inner text-center">
+                <div className="flex justify-between items-center mb-6 px-2">
+                   <h4 className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.4em] italic">Season Performance</h4>
+                   <span className="bg-blue-600/20 text-blue-500 px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest">Feed Active</span>
                 </div>
-
                 {loadingStats ? (
-                  <div className="flex justify-center py-10 animate-spin"><div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full"></div></div>
+                  <div className="flex justify-center py-6 animate-spin"><div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full"></div></div>
                 ) : stats ? (
-                  <div className="space-y-12">
-                    <div className="grid grid-cols-3 gap-4">
-                      <div><p className="text-6xl font-black italic tracking-tighter text-white leading-none">{stats.pts}</p><p className="text-blue-500 text-[9px] font-black mt-3 uppercase tracking-widest">Points</p></div>
-                      <div className="border-x border-zinc-800"><p className="text-6xl font-black italic tracking-tighter text-white leading-none">{stats.reb}</p><p className="text-blue-500 text-[9px] font-black mt-3 uppercase tracking-widest">Rebounds</p></div>
-                      <div><p className="text-6xl font-black italic tracking-tighter text-white">{stats.ast}</p><p className="text-blue-500 text-[9px] font-black mt-3 uppercase tracking-widest">Assists</p></div>
-                    </div>
-                    <div className="grid grid-cols-2 pt-10 border-t border-zinc-800/50 font-black">
-                       <div className="border-r border-zinc-800"><p className="text-3xl italic text-zinc-200">{stats.stl}</p><p className="text-zinc-600 text-[9px] uppercase">Steals</p></div>
-                       <div><p className="text-3xl italic text-zinc-200">{stats.blk}</p><p className="text-zinc-600 text-[9px] uppercase">Blocks</p></div>
-                    </div>
+                  <div className="grid grid-cols-5 gap-2">
+                    <div><p className="text-3xl font-black italic text-white">{stats.pts}</p><p className="text-[7px] text-blue-500 font-bold mt-1 uppercase">PTS</p></div>
+                    <div><p className="text-3xl font-black italic text-white">{stats.reb}</p><p className="text-[7px] text-blue-500 font-bold mt-1 uppercase">REB</p></div>
+                    <div><p className="text-3xl font-black italic text-white">{stats.ast}</p><p className="text-[7px] text-blue-500 font-bold mt-1 uppercase">AST</p></div>
+                    <div className="opacity-50"><p className="text-2xl font-black italic text-zinc-400">{stats.stl}</p><p className="text-[7px] text-zinc-600 font-bold mt-1 uppercase">STL</p></div>
+                    <div className="opacity-50"><p className="text-2xl font-black italic text-zinc-400">{stats.blk}</p><p className="text-[7px] text-zinc-600 font-bold mt-1 uppercase">BLK</p></div>
                   </div>
-                ) : (
-                  <div className="py-10 text-zinc-600 font-black uppercase text-[10px] italic tracking-widest">
-                    Data currently archived for this season.
-                  </div>
-                )}
+                ) : <div className="py-6 text-zinc-700 font-black uppercase text-[9px] italic">Data Processing...</div>}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-2 text-left font-black italic">
-                 <div><p className="text-[8px] text-zinc-500 uppercase tracking-widest mb-1 italic">Draft Info</p><p className="text-sm text-white uppercase">{selectedPlayer.draft_year ? `${selectedPlayer.draft_year} R${selectedPlayer.draft_round} P${selectedPlayer.draft_number}` : 'Undrafted'}</p></div>
-                 <div><p className="text-[8px] text-zinc-500 uppercase tracking-widest mb-1 italic">Alma Mater</p><p className="text-sm text-white uppercase truncate">{selectedPlayer.college || 'Direct Entry'}</p></div>
-                 <div><p className="text-[8px] text-zinc-500 uppercase tracking-widest mb-1 italic">Country</p><p className="text-sm text-white uppercase">{selectedPlayer.country || 'USA'}</p></div>
+              {/* 档案区 - 扁平排列 */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left font-black italic border-t border-zinc-900 pt-6">
+                 <div className="pl-2 border-l border-zinc-800">
+                    <p className="text-[7px] text-zinc-600 uppercase mb-1">Draft</p>
+                    <p className="text-xs text-zinc-300 uppercase">{selectedPlayer.draft_year ? `${selectedPlayer.draft_year} R${selectedPlayer.draft_round} P${selectedPlayer.draft_number}` : 'Undrafted'}</p>
+                 </div>
+                 <div className="pl-2 border-l border-zinc-800">
+                    <p className="text-[7px] text-zinc-600 uppercase mb-1">Alma Mater</p>
+                    <p className="text-xs text-zinc-300 uppercase truncate">{selectedPlayer.college || 'Direct'}</p>
+                 </div>
+                 <div className="pl-2 border-l border-zinc-800">
+                    <p className="text-[7px] text-zinc-600 uppercase mb-1">Country</p>
+                    <p className="text-xs text-zinc-300 uppercase">{selectedPlayer.country || 'USA'}</p>
+                 </div>
               </div>
-              <button onClick={() => setSelectedPlayer(null)} className="w-full mt-4 bg-zinc-800 py-6 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-zinc-700 transition-all">Close Terminal</button>
+              <button onClick={() => setSelectedPlayer(null)} className="w-full bg-zinc-800 py-5 rounded-2xl font-black uppercase tracking-widest text-[9px] hover:bg-zinc-700 transition-all border border-zinc-700/30">Close Dossier</button>
             </div>
           </div>
         </div>
@@ -250,11 +229,11 @@ function PlayerTerminalContent() {
 export default function PlayersPage() {
   return (
     <div className="min-h-screen bg-[#0b0e11] text-white p-6 md:p-12 font-sans overflow-x-hidden">
-      <nav className="max-w-7xl mx-auto flex justify-between items-center mb-16 border-b border-zinc-800 pb-8 relative z-10">
-        <Link href="/"><h1 className="text-3xl font-black italic tracking-tighter uppercase text-white">Me1ten<span className="text-blue-500">.Stats</span></h1></Link>
-        <Link href="/" className="bg-zinc-800 px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all text-zinc-400">Back</Link>
+      <nav className="max-w-7xl mx-auto flex justify-between items-center mb-12 border-b border-zinc-800 pb-8 relative z-10">
+        <Link href="/"><h1 className="text-3xl font-black italic tracking-tighter uppercase text-white hover:text-blue-500 transition-colors">Me1ten<span className="text-blue-500">.Stats</span></h1></Link>
+        <Link href="/" className="bg-zinc-800 px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all">Back</Link>
       </nav>
-      <Suspense fallback={<div className="text-center py-40 animate-pulse font-black uppercase text-zinc-600">Connecting to Intelligence Terminal...</div>}>
+      <Suspense fallback={<div className="text-center py-40 animate-pulse font-black text-zinc-600 uppercase">Connecting...</div>}>
         <PlayerTerminalContent />
       </Suspense>
     </div>
